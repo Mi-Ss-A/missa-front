@@ -1,0 +1,6 @@
+.wibee-logo {
+    width: 259px;
+    height: 259px;
+    background: url('../../wibee.png') no-repeat center/cover;
+    border-radius: 28px;
+}

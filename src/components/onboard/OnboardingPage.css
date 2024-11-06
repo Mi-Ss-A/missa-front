@@ -1,0 +1,43 @@
+.page-1-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 67px 16px;
+    gap: 61px;
+    position: absolute;
+    width: 100%; /* 기본적으로 전체 화면 너비 사용 */
+    max-width: 1280px; /* 최대 너비를 설정 */
+    height: auto; /* 높이를 자동으로 조정 */
+    border-radius: 18px;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* 작은 화면용 스타일 */
+@media (max-width: 768px) {
+    .page-1-container {
+        padding: 40px 10px;
+        gap: 30px;
+        width: 90%; /* 너비를 더 작게 조정 */
+    }
+
+    .frame-141 {
+        width: 300px; /* 컴포넌트 너비 조정 */
+        height: auto; /* 높이를 자동으로 조정 */
+        gap: 60px; /* 간격 조정 */
+    }
+}
+
+/* 모바일 기기용 스타일 */
+@media (max-width: 480px) {
+    .page-1-container {
+        padding: 20px 5px;
+        gap: 20px;
+        width: 100%; /* 화면을 꽉 채우도록 조정 */
+    }
+
+    .frame-141 {
+        width: 250px; /* 더 작은 너비 */
+        gap: 40px; /* 간격 조정 */
+    }
+}

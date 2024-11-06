@@ -1,0 +1,12 @@
+/* LoginForm.css */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f7f8fa;
+    border-radius: 18px;
+}
