@@ -1,6 +1,6 @@
 // pages/PreferencePage.js
 import { useNavigate } from 'react-router-dom';
-import { History, LogOut } from 'lucide-react';
+import { History, LogOut, MessageSquarePlus } from 'lucide-react';
 import BasicLayout from '../layouts/BasicLayout';
 
 const PreferencePage = () => {
@@ -8,6 +8,10 @@ const PreferencePage = () => {
 
     const handleHistory = () => {
         navigate('/history');
+    };
+
+    const handleNewChat = () => {
+        navigate('/chat');  // 메인 채팅 페이지로 이동
     };
 
     const handleLogout = () => {
@@ -20,8 +24,19 @@ const PreferencePage = () => {
             {/* 메뉴 리스트 */}
             <div className="flex flex-col p-4">
                 <button
-                    onClick={handleHistory}
+                    onClick={handleNewChat}
                     className="flex items-center p-4 hover:bg-gray-50 rounded-lg"
+                >
+                    <MessageSquarePlus className="w-6 h-6 mr-4 text-gray-600" />
+                    <div className="flex flex-col items-start">
+                        <span className="font-medium">New Chat</span>
+                        <span className="text-sm text-gray-500">Start a new conversation</span>
+                    </div>
+                </button>
+
+                <button
+                    onClick={handleHistory}
+                    className="flex items-center p-4 hover:bg-gray-50 rounded-lg mt-2"
                 >
                     <History className="w-6 h-6 mr-4 text-gray-600" />
                     <div className="flex flex-col items-start">
