@@ -1,6 +1,7 @@
 // pages/PreferencePage.js
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, History, LogOut } from 'lucide-react';
+import { History, LogOut } from 'lucide-react';
+import BasicLayout from '../layouts/BasicLayout';
 
 const PreferencePage = () => {
     const navigate = useNavigate();
@@ -15,18 +16,7 @@ const PreferencePage = () => {
     };
 
     return (
-        <div className="flex flex-col h-screen bg-white">
-            {/* 헤더 */}
-            <div className="flex items-center p-4 border-b">
-                <button
-                    onClick={() => navigate(-1)}
-                    className="p-2 hover:bg-gray-100 rounded-full"
-                >
-                    <ArrowLeft size={24} />
-                </button>
-                <h1 className="text-xl font-bold ml-4">Preference</h1>
-            </div>
-
+        <BasicLayout title="Preference">
             {/* 메뉴 리스트 */}
             <div className="flex flex-col p-4">
                 <button
@@ -51,7 +41,7 @@ const PreferencePage = () => {
                     </div>
                 </button>
             </div>
-        </div>
+        </BasicLayout>
     );
 };
 

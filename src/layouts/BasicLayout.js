@@ -1,10 +1,10 @@
 // layouts/BasicLayout.js
-import BasicMenu from '../components/menus/BasicMenu';
+import Header from "../components/menus/Header";
 
-const BasicLayout = ({ children }) => {
+const BasicLayout = ({ children, title, showMenu = false }) => {
     return (
         <div className="h-screen flex flex-col">
-            <BasicMenu />
+            <Header title={title} showMenu={showMenu} />
             <main className="flex-1 overflow-y-auto">
                 {children}
             </main>

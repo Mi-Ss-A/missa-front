@@ -71,7 +71,7 @@ const ChatPage = () => {
     };
 
     return (
-        <BasicLayout>
+        <BasicLayout showMenu={true}>
             <div className="flex flex-col h-screen bg-blue-50">
                 {/* 로고 섹션 */}
                 <div className="flex justify-center my-8">

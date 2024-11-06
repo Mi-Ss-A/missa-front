@@ -1,29 +1,57 @@
 
 // pages/HistoryPage.js
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import BasicLayout from '../layouts/BasicLayout';
 
 const HistoryPage = () => {
-    const navigate = useNavigate();
+    // 더미 데이터
+    const history = {
+        today: [
+            "How Much Pushaps A day",
+            "Top 10 Imdb Best Movies ever",
+            "Tell me what support i played daily fitness"
+        ],
+        yesterday: [
+            "How Much Pushaps A day",
+            "Top 10 Imdb Best Movies ever",
+            "How are you, friend? long time...",
+            "Tell me what support i played daily fitness"
+        ]
+    };
 
     return (
-        <div className="flex flex-col h-screen bg-white">
-            {/* 헤더 */}
-            <div className="flex items-center p-4 border-b">
-                <button
-                    onClick={() => navigate(-1)}
-                    className="p-2 hover:bg-gray-100 rounded-full"
-                >
-                    <ArrowLeft size={24} />
-                </button>
-                <h1 className="text-xl font-bold ml-4">History</h1>
-            </div>
+        <BasicLayout title="History">
+            <div className="flex-1 p-4">
+                {/* Today Section */}
+                <div className="mb-6">
+                    <h2 className="text-lg font-semibold mb-3">Today</h2>
+                    <div className="space-y-2">
+                        {history.today.map((item, index) => (
+                            <button
+                                key={`today-${index}`}
+                                className="w-full p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                            >
+                                {item}
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
-            {/* 채팅 기록 리스트 */}
-            <div className="flex-1 overflow-y-auto p-4">
-                {/* 여기에 채팅 기록 컴포넌트들 추가 */}
+                {/* Yesterday Section */}
+                <div>
+                    <h2 className="text-lg font-semibold mb-3">Yesterday</h2>
+                    <div className="space-y-2">
+                        {history.yesterday.map((item, index) => (
+                            <button
+                                key={`yesterday-${index}`}
+                                className="w-full p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                            >
+                                {item}
+                            </button>
+                        ))}
+                    </div>
+                </div>
             </div>
-        </div>
+        </BasicLayout>
     );
 };
 
