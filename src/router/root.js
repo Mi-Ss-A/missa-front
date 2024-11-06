@@ -3,6 +3,7 @@ import { Suspense, lazy } from "react";
 const { createBrowserRouter } = require("react-router-dom");
 const Loading = <div>Loading....</div>
 const Main = lazy(() => import("../pages/MainPage"))
+const Chat = lazy(() => import("../pages/ChatPage"))
 // const About = lazy(() => import("../pages/AboutPage"))
 // const TodoIndex = lazy(() => import("../pages/todo/indexPage"))
 // const ProductIndex = lazy(() => import("../pages/products/IndexPage"))
@@ -12,6 +13,11 @@ const root = createBrowserRouter([
         path: ""
         ,
         element: <Suspense fallback={Loading}><Main/></Suspense>
+    },
+    {
+        path: "chat"
+        ,
+        element: <Suspense fallback={Loading}><Chat/></Suspense>
     }
     // {
     //     path: "about",
