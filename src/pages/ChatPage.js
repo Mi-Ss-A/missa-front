@@ -1,34 +1,44 @@
+
 // pages/ChatPage.js
 import { useState } from 'react';
 import BasicLayout from '../layouts/BasicLayout';
 import ChatInput from '../components/chat/ChatInput';
-import RegenerateButton from '../components/chat/RegenerateButton';
 import ChatMessage from '../components/chat/ChatMessage';
+import RegenerateButton from '../components/chat/RegenerateButton';
 
 const ChatPage = () => {
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const [lastUserMessage, setLastUserMessage] = useState('');
 
-    // 미리 정의된 메시지 목록
-    const predefinedMessages = [
-        "내 거래내역 사칭 확인 (유료)",
-        "어떠한 용도 카드 제공확인",
-        "공격적인 투자 상품로 추천해줘"
+    // 초기 버튼 메시지 리스트
+    const initialMessages = [
+        "Remembers what user said earlier in the conversation",
+        "Allows user to provide follow-up corrections With Ai"
     ];
 
-    const handleButtonClick = (text) => {
-        setInputMessage(text);
-        handleSendMessage(text);
+    const handleInitialButtonClick = (text) => {
+        setMessages(prev => [...prev, {
+            text,
+            isUser: true,
+            timestamp: new Date()
+        }]);
+        setLastUserMessage(text);
+
+        setTimeout(() => {
+            setMessages(prev => [...prev, {
+                text: `응답: ${text}에 대한 답변입니다.`,
+                isUser: false,
+                timestamp: new Date()
+            }]);
+        }, 1000);
     };
 
     const handleRegenerate = async () => {
         if (lastUserMessage) {
-            // 마지막 봇 메시지 제거
             const newMessages = messages.slice(0, -1);
             setMessages(newMessages);
 
-            // 새로운 응답 생성
             setTimeout(() => {
                 setMessages(prev => [...prev, {
                     text: `새로 생성된 응답: ${lastUserMessage}에 대한 답변입니다.`,
@@ -41,13 +51,12 @@ const ChatPage = () => {
 
     const handleSendMessage = (text) => {
         if (text.trim()) {
-            setLastUserMessage(text); // 마지막 사용자 메시지 저장
+            setLastUserMessage(text);
             setMessages([
                 ...messages,
                 { text, isUser: true, timestamp: new Date() }
             ]);
 
-            // 봇 응답 추가
             setTimeout(() => {
                 setMessages(prev => [
                     ...prev,
@@ -74,28 +83,30 @@ const ChatPage = () => {
 
                 {/* 메시지 목록 섹션 */}
                 <div className="flex-1 px-4 overflow-y-auto mb-16">
-                    <div className="space-y-2 mb-4 py-4">
-                        {messages.map((message, index) => (
-                            <ChatMessage
-                                key={index}
-                                text={message.text}
-                                isUser={message.isUser}
-                            />
-                        ))}
-                    </div>
+                    {messages.length > 0 && (
+                        <div className="space-y-2 mb-4">
+                            {messages.map((message, index) => (
+                                <ChatMessage
+                                    key={index}
+                                    text={message.text}
+                                    isUser={message.isUser}
+                                />
+                            ))}
 
-                    {/* Regenerate 버튼 */}
-                    {messages.length > 0 && !messages[messages.length - 1].isUser && (
-                        <RegenerateButton onRegenerate={handleRegenerate} />
+                            {/* Regenerate 버튼 - 마지막 메시지가 봇의 메시지일 때만 표시 */}
+                            {!messages[messages.length - 1]?.isUser && (
+                                <RegenerateButton onRegenerate={handleRegenerate} />
+                            )}
+                        </div>
                     )}
 
-                    {/* 미리 정의된 버튼들 */}
+                    {/* 초기 버튼들 */}
                     {messages.length === 0 && (
                         <div className="space-y-4">
-                            {predefinedMessages.map((text, index) => (
+                            {initialMessages.map((text, index) => (
                                 <button
                                     key={index}
-                                    onClick={() => handleButtonClick(text)}
+                                    onClick={() => handleInitialButtonClick(text)}
                                     className="w-full p-4 text-left bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
                                 >
                                     {text}
