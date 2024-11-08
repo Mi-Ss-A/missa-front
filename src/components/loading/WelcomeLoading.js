@@ -1,10 +1,7 @@
-// src/pages/OnBoardingPage.js
+// src/components/WelcomeLoading.js
 import React from 'react';
-import WelcomeMessage from '../components/onboard/WelcomeMessage';
-import Description from '../components/onboard/Description';
-import GetStartedButton from '../components/onboard/GetStartedButton';
 
-const OnBoardingPage = () => {
+const WelcomeLoading = () => {
     return (
         <div className="flex flex-col justify-between items-center h-screen p-12 bg-white bg-gradient-to-br from-transparent via-blue-400/30 to-white rounded-lg mx-auto text-center relative">
             {/* 로고를 수평 중앙으로 정렬 */}
@@ -14,14 +11,12 @@ const OnBoardingPage = () => {
                     style={{ backgroundImage: "url('/wibee.png')" }}
                 ></div>
             </div>
-
             <div className="w-full text-center">
-                <WelcomeMessage />
-                <Description />
+                <p className="font-semibold text-4xl text-blue-900 tracking-tight mb-2">WIBEECHAT</p>
+                <p className="font-light text-lg text-gray-600">Version 1.0</p>
             </div>
-            <GetStartedButton />
         </div>
     );
 };
 
-export default OnBoardingPage;
+export default WelcomeLoading;

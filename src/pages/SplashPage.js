@@ -7,7 +7,7 @@ const SplashPage = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // 3초 후 Page1으로 이동
+        // 3초 후 onboarding으로 이동
         const timer = setTimeout(() => {
             navigate('/onboarding');
         }, 3000);

@@ -1,11 +1,14 @@
+// src/components/login/Footer.js
 import React from 'react';
-import './Footer.css';
 
 const Footer = () => {
     return (
-        <footer className="footer">
-            <p className="footer-text">
-                Create New Account? <a href="/signup">Sign up</a>
+        <footer className="text-center mt-5">
+            <p className="text-base text-gray-400 font-sans">
+                Create New Account?{' '}
+                <a href="/signup" className="text-gray-800 hover:underline">
+                    Sign up
+                </a>
             </p>
         </footer>
     );
