@@ -1,4 +1,3 @@
-
 // pages/ChatPage.js
 import { useState } from 'react';
 import BasicLayout from '../layouts/BasicLayout';
@@ -12,25 +11,28 @@ const ChatPage = () => {
     const [lastUserMessage, setLastUserMessage] = useState('');
 
     // 초기 버튼 메시지 리스트
-    const initialMessages = [
-        "Remembers what user said earlier in the conversation",
-        "Allows user to provide follow-up corrections With Ai"
-    ];
+    const initialMessages = ['Sample Input', '샘플 텍스트'];
 
     const handleInitialButtonClick = (text) => {
-        setMessages(prev => [...prev, {
-            text,
-            isUser: true,
-            timestamp: new Date()
-        }]);
+        setMessages((prev) => [
+            ...prev,
+            {
+                text,
+                isUser: true,
+                timestamp: new Date(),
+            },
+        ]);
         setLastUserMessage(text);
 
         setTimeout(() => {
-            setMessages(prev => [...prev, {
-                text: `응답: ${text}에 대한 답변입니다.`,
-                isUser: false,
-                timestamp: new Date()
-            }]);
+            setMessages((prev) => [
+                ...prev,
+                {
+                    text: `응답: ${text}에 대한 답변입니다.`,
+                    isUser: false,
+                    timestamp: new Date(),
+                },
+            ]);
         }, 1000);
     };
 
@@ -40,11 +42,14 @@ const ChatPage = () => {
             setMessages(newMessages);
 
             setTimeout(() => {
-                setMessages(prev => [...prev, {
-                    text: `새로 생성된 응답: ${lastUserMessage}에 대한 답변입니다.`,
-                    isUser: false,
-                    timestamp: new Date()
-                }]);
+                setMessages((prev) => [
+                    ...prev,
+                    {
+                        text: `새로 생성된 응답: ${lastUserMessage}에 대한 답변입니다.`,
+                        isUser: false,
+                        timestamp: new Date(),
+                    },
+                ]);
             }, 1000);
         }
     };
@@ -52,19 +57,16 @@ const ChatPage = () => {
     const handleSendMessage = (text) => {
         if (text.trim()) {
             setLastUserMessage(text);
-            setMessages([
-                ...messages,
-                { text, isUser: true, timestamp: new Date() }
-            ]);
+            setMessages([...messages, { text, isUser: true, timestamp: new Date() }]);
 
             setTimeout(() => {
-                setMessages(prev => [
+                setMessages((prev) => [
                     ...prev,
                     {
                         text: `응답: ${text}에 대한 답변입니다.`,
                         isUser: false,
-                        timestamp: new Date()
-                    }
+                        timestamp: new Date(),
+                    },
                 ]);
             }, 1000);
         }
@@ -86,11 +88,7 @@ const ChatPage = () => {
                     {messages.length > 0 && (
                         <div className="space-y-2 mb-4">
                             {messages.map((message, index) => (
-                                <ChatMessage
-                                    key={index}
-                                    text={message.text}
-                                    isUser={message.isUser}
-                                />
+                                <ChatMessage key={index} text={message.text} isUser={message.isUser} />
                             ))}
 
                             {/* Regenerate 버튼 - 마지막 메시지가 봇의 메시지일 때만 표시 */}
@@ -118,11 +116,7 @@ const ChatPage = () => {
 
                 {/* 메시지 입력 컴포넌트 */}
                 <div className="fixed bottom-0 left-0 right-0">
-                    <ChatInput
-                        message={inputMessage}
-                        setMessage={setInputMessage}
-                        onSendMessage={handleSendMessage}
-                    />
+                    <ChatInput message={inputMessage} setMessage={setInputMessage} onSendMessage={handleSendMessage} />
                 </div>
             </div>
         </BasicLayout>

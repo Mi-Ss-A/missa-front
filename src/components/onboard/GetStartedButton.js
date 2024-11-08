@@ -1,18 +1,20 @@
+// src/components/button/GetStartedButton.js
 import React from 'react';
-import './GetStartedButton.css';
 import { useNavigate } from 'react-router-dom';
 
 const GetStartedButton = () => {
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수 가져오기
 
-    const handleGetStartedClick = () => {
-        // 페이지 전환 구현 (애니메이션 추가 가능)
-        navigate('/login');
+    const handleClick = () => {
+        navigate('/login'); // 버튼 클릭 시 /login으로 이동
     };
 
     return (
-        <button className="get-started-button" onClick={handleGetStartedClick}>
-            Get started
+        <button
+            className="bg-[#00497a] text-white border-0 py-4 px-8 text-lg font-medium rounded-lg cursor-pointer transition-colors duration-300 hover:bg-[#003f64]"
+            onClick={handleClick}
+        >
+            <span className="font-sans tracking-tight">Get Started</span>
         </button>
     );
 };

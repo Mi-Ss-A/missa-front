@@ -4,12 +4,10 @@ import Header from './Header';
 import InputField from './InputField';
 import Button from './Button';
 import Footer from './Footer';
-import './LoginForm.css';
-import { Navigate } from 'react-router-dom';
 
 const LoginForm = ({ onLogin }) => {
     return (
-        <div className="login-form">
+        <div className="flex flex-col items-center w-11/12 max-w-md mx-auto p-8 bg-white rounded-lg shadow-lg">
             <Header />
             <InputField type="text" placeholder="Enter Your ID" />
             <InputField type="password" placeholder="Password" />

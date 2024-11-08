@@ -1,11 +1,11 @@
+// src/components/login/Header.js
 import React from 'react';
-import './Header.css';
 
 const Header = () => {
     return (
-        <header className="header">
-            <h1 className="header-title">Login Your Account</h1>
-        </header>
+        <h2 className="text-center text-blue-900 font-semibold mb-6 text-xl sm:text-2xl md:text-3xl lg:text-4xl">
+            Login to WIBEECHAT
+        </h2>
     );
 };
 
