@@ -1,13 +1,43 @@
-// src/pages/LoginPage.js
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../components/login/LoginForm';
+import axios from 'axios';
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
 
-    const handleLogin = () => {
-        navigate('/chat');
+    const handleLogin = async (userId, userPassword) => {
+        setLoading(true);
+        setError(null); // 이전 오류를 초기화
+        try {
+            const response = await axios.post(
+                'http://localhost:8081/api/users/login', // 로그인 API 엔드포인트
+                {
+                    userId: userId,
+                    userPassword: userPassword,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true, // 쿠키를 포함하도록 설정
+                }
+            );
+            console.log('response.data: ', response.data); // 응답 데이터 확인
+            if (response.data.success) {
+                // 로그인 성공 시, 사용자를 채팅 페이지로 리다이렉트
+                navigate('/chat');
+            } else {
+                // 로그인 실패 시, 오류 메시지 처리
+                setError('로그인 실패. 아이디 또는 비밀번호를 확인해주세요.');
+            }
+        } catch (error) {
+            setError('서버와의 연결에 문제가 발생했습니다.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -19,9 +49,10 @@ const LoginPage = () => {
                     style={{ backgroundImage: "url('/wibee.png')" }}
                 ></div>
             </div>
+
             {/* 로그인 폼 */}
             <div className="w-full max-w-md">
-                <LoginForm onLogin={handleLogin} />
+                <LoginForm onLogin={handleLogin} error={error} loading={loading} />
             </div>
         </div>
     );
