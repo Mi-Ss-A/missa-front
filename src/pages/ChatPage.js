@@ -1,9 +1,9 @@
-// pages/ChatPage.js
 import { useState } from 'react';
 import BasicLayout from '../layouts/BasicLayout';
 import ChatInput from '../components/chat/ChatInput';
 import ChatMessage from '../components/chat/ChatMessage';
 import RegenerateButton from '../components/chat/RegenerateButton';
+//import axios from 'axios'; // axios 임포트
 
 const ChatPage = () => {
     const [messages, setMessages] = useState([]);
@@ -24,6 +24,7 @@ const ChatPage = () => {
         ]);
         setLastUserMessage(text);
 
+        // 서버 응답 추가 (dummy response for now)
         setTimeout(() => {
             setMessages((prev) => [
                 ...prev,
@@ -38,14 +39,16 @@ const ChatPage = () => {
 
     const handleRegenerate = async () => {
         if (lastUserMessage) {
-            const newMessages = messages.slice(0, -1);
+            const newMessages = messages.slice(0, -1); // 마지막 봇 응답 제거
             setMessages(newMessages);
 
+            // 새로 생성된 응답
             setTimeout(() => {
+                const regeneratedMessage = `새로 생성된 응답: ${lastUserMessage}에 대한 답변입니다.`;
                 setMessages((prev) => [
                     ...prev,
                     {
-                        text: `새로 생성된 응답: ${lastUserMessage}에 대한 답변입니다.`,
+                        text: regeneratedMessage,
                         isUser: false,
                         timestamp: new Date(),
                     },
@@ -54,22 +57,26 @@ const ChatPage = () => {
         }
     };
 
-    const handleSendMessage = (text) => {
-        if (text.trim()) {
-            setLastUserMessage(text);
-            setMessages([...messages, { text, isUser: true, timestamp: new Date() }]);
+    const handleSendMessage = (userMessage, responseMessage) => {
+        // 사용자 메시지 추가
+        setMessages((prev) => [
+            ...prev,
+            {
+                text: userMessage,
+                isUser: true,
+                timestamp: new Date(),
+            },
+        ]);
 
-            setTimeout(() => {
-                setMessages((prev) => [
-                    ...prev,
-                    {
-                        text: `응답: ${text}에 대한 답변입니다.`,
-                        isUser: false,
-                        timestamp: new Date(),
-                    },
-                ]);
-            }, 1000);
-        }
+        // 서버 응답 추가
+        setMessages((prev) => [
+            ...prev,
+            {
+                text: responseMessage,
+                isUser: false,
+                timestamp: new Date(),
+            },
+        ]);
     };
 
     return (
@@ -116,7 +123,11 @@ const ChatPage = () => {
 
                 {/* 메시지 입력 컴포넌트 */}
                 <div className="fixed bottom-0 left-0 right-0">
-                    <ChatInput message={inputMessage} setMessage={setInputMessage} onSendMessage={handleSendMessage} />
+                    <ChatInput
+                        message={inputMessage}
+                        setMessage={setInputMessage}
+                        onSendMessage={handleSendMessage} // 메시지 전송 처리
+                    />
                 </div>
             </div>
         </BasicLayout>
