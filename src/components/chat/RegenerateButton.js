@@ -1,16 +1,22 @@
-// components/chat/RegenerateButton.js
 const RegenerateButton = ({ onRegenerate }) => {
+    const handleClick = () => {
+        console.log("Regenerate button clicked!");
+        onRegenerate();
+    };
+
     return (
         <div className="flex justify-center my-4">
             <button
-                onClick={onRegenerate}
+                onClick={handleClick}
                 className="flex items-center gap-2 px-4 py-2 text-gray-600 bg-white rounded-lg border hover:bg-gray-50 transition-colors"
+                aria-label="Regenerate Response"
             >
                 <svg
                     width="16"
                     height="16"
                     viewBox="0 0 16 16"
                     className="rotate-90"
+                    aria-hidden="true"
                 >
                     <path
                         fill="currentColor"
