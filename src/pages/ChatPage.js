@@ -1,5 +1,4 @@
-// pages/ChatPage.js
-import { useState } from 'react';
+import { useRef,useState } from 'react';
 import BasicLayout from '../layouts/BasicLayout';
 import ChatInput from '../components/chat/ChatInput';
 import ChatMessage from '../components/chat/ChatMessage';
@@ -10,8 +9,7 @@ const ChatPage = () => {
     const [inputMessage, setInputMessage] = useState('');
     const [lastUserMessage, setLastUserMessage] = useState('');
 
-    // 초기 버튼 메시지 리스트
-    const initialMessages = ['Sample Input', '샘플 텍스트'];
+    const initialMessages = ['궁금한 점을 입력 해보세요!', '샘플 텍스트'];
 
     const handleInitialButtonClick = (text) => {
         setMessages((prev) => [
@@ -23,54 +21,34 @@ const ChatPage = () => {
             },
         ]);
         setLastUserMessage(text);
-
-        setTimeout(() => {
-            setMessages((prev) => [
-                ...prev,
-                {
-                    text: `응답: ${text}에 대한 답변입니다.`,
-                    isUser: false,
-                    timestamp: new Date(),
-                },
-            ]);
-        }, 1000);
     };
 
-    const handleRegenerate = async () => {
-        if (lastUserMessage) {
-            const newMessages = messages.slice(0, -1);
-            setMessages(newMessages);
-
-            setTimeout(() => {
-                setMessages((prev) => [
-                    ...prev,
-                    {
-                        text: `새로 생성된 응답: ${lastUserMessage}에 대한 답변입니다.`,
-                        isUser: false,
-                        timestamp: new Date(),
-                    },
-                ]);
-            }, 1000);
-        }
+    // 메시지 리스트에 새 응답을 추가
+    const handleSendMessage = (userMessage, responseMessage) => {
+        setLastUserMessage(userMessage);
+        setMessages((prev) => [
+            ...prev,
+            {
+                text: userMessage,
+                isUser: true,
+                timestamp: new Date(),
+            },
+            {
+                text: responseMessage,
+                isUser: false,
+                timestamp: new Date(),
+            },
+        ]);
     };
 
-    const handleSendMessage = (text) => {
-        if (text.trim()) {
-            setLastUserMessage(text);
-            setMessages([...messages, { text, isUser: true, timestamp: new Date() }]);
+       // ChatInput 컴포넌트 참조를 위한 ref 생성
+       const chatInputRef = useRef(null);
 
-            setTimeout(() => {
-                setMessages((prev) => [
-                    ...prev,
-                    {
-                        text: `응답: ${text}에 대한 답변입니다.`,
-                        isUser: false,
-                        timestamp: new Date(),
-                    },
-                ]);
-            }, 1000);
-        }
-    };
+       // RegenerateButton 클릭 핸들러
+       const handleRegenerateClick = () => {
+           // ChatInput 컴포넌트의 regenerate 메소드 호출
+           chatInputRef.current?.handleRegenerate();
+       };
 
     return (
         <BasicLayout showMenu={true}>
@@ -93,7 +71,7 @@ const ChatPage = () => {
 
                             {/* Regenerate 버튼 - 마지막 메시지가 봇의 메시지일 때만 표시 */}
                             {!messages[messages.length - 1]?.isUser && (
-                                <RegenerateButton onRegenerate={handleRegenerate} />
+                              <RegenerateButton onRegenerate={handleRegenerateClick} />
                             )}
                         </div>
                     )}
@@ -112,11 +90,17 @@ const ChatPage = () => {
                             ))}
                         </div>
                     )}
-                </div>
 
-                {/* 메시지 입력 컴포넌트 */}
-                <div className="fixed bottom-0 left-0 right-0">
-                    <ChatInput message={inputMessage} setMessage={setInputMessage} onSendMessage={handleSendMessage} />
+                    {/* 메시지 입력 컴포넌트 */}
+                    <div className="fixed bottom-0 left-0 right-0">
+                        <ChatInput
+                            ref={chatInputRef}
+                            message={inputMessage}
+                            setMessage={setInputMessage}
+                            onSendMessage={handleSendMessage}
+                            lastUserMessage={lastUserMessage}
+                        />
+                    </div>
                 </div>
             </div>
         </BasicLayout>

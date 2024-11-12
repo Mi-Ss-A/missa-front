@@ -1,21 +1,70 @@
-// components/chat/ChatInput.js
 import { ArrowRight } from 'lucide-react';
-import { useRef } from 'react';
+import { forwardRef,useRef, useState,useImperativeHandle  } from 'react';
+import axios from 'axios';
 
-const ChatInput = ({ message, setMessage, onSendMessage }) => {
+const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMessage }, ref) => {
+    const [isLoading, setIsLoading] = useState(false);
     const textareaRef = useRef(null);
 
-    const handleSubmit = (e) => {
+    // API 요청 처리를 위한 공통 함수
+    const handleApiRequest = async (messageText) => {
+        try {
+            const response = await axios.post('http://localhost:5000/api/chat', {
+                message: messageText
+            });
+
+            if (response.status === 200) {
+                return response.data.response;
+            }
+        } catch (error) {
+            console.error('Error in API request:', error);
+            throw error;
+        }
+    };
+
+    // 메시지 전송 처리
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (message.trim()) {
-            onSendMessage(message);
-            setMessage('');
-            if (textareaRef.current) {
-                textareaRef.current.style.height = '40px';
+            setIsLoading(true);
+            try {
+                const responseMessage = await handleApiRequest(message);
+                onSendMessage(message, responseMessage);
+                setMessage('');
+                if (textareaRef.current) {
+                    textareaRef.current.style.height = '40px';
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+            } finally {
+                setIsLoading(false);
             }
         }
     };
 
+    // Regenerate 처리
+    const handleRegenerate = async () => {
+        if (lastUserMessage) {
+            setIsLoading(true);
+            try {
+                const regeneratedMessage = await handleApiRequest(lastUserMessage);
+                if (regeneratedMessage) {
+                    onSendMessage(lastUserMessage, regeneratedMessage);
+                }
+            } catch (error) {
+                console.error('Error regenerating response:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+    };
+
+// 부모 컴포넌트에서 접근할 수 있는 메서드 노출
+    useImperativeHandle(ref, () => ({
+        handleRegenerate
+    }));
+
+    // 텍스트 영역 높이 자동 조정
     const handleTextAreaChange = (e) => {
         setMessage(e.target.value);
         e.target.style.height = '40px';
@@ -24,6 +73,10 @@ const ChatInput = ({ message, setMessage, onSendMessage }) => {
 
     return (
         <div className="p-4 bg-white border-t">
+            {isLoading && (
+                <div className="mt-4 text-center text-gray-500">Loading... 잠시만 기다려주세요...</div>
+            )}
+
             <form onSubmit={handleSubmit} className="flex items-center gap-2">
                 <div className="relative flex-1">
                     <textarea
@@ -54,6 +107,8 @@ const ChatInput = ({ message, setMessage, onSendMessage }) => {
             </form>
         </div>
     );
-};
+});
+
+ChatInput.displayName = 'ChatInput';
 
 export default ChatInput;
