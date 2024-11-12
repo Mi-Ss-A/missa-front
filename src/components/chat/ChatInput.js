@@ -28,7 +28,23 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
         if (message.trim()) {
             setIsLoading(true);
             try {
-                const responseMessage = await handleApiRequest(message);
+                let responseMessage;
+                const portfolioKeywords = ['portfolio', '포트 폴리오', '포트폴리오', 'portpolio', '포폴'];
+
+                // 메시지에 포트폴리오/portfolio 단어가 포함되어 있는지 확인
+                const isPortfolioRelated = portfolioKeywords.some(keyword => 
+                    message.toLowerCase().includes(keyword.toLowerCase())
+                );
+            
+                
+                if (isPortfolioRelated) {
+                    // 포트폴리오 관련 API 호출
+                    responseMessage = await handlePortfolioApiRequest(message);
+                } else {
+                    // 기존 API 호출
+                    responseMessage = await handleApiRequest(message);
+                }
+                
                 onSendMessage(message, responseMessage);
                 setMessage('');
                 if (textareaRef.current) {
@@ -41,6 +57,26 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
             }
         }
     };
+
+    // 포트폴리오 전용 API 요청 함수
+    const handlePortfolioApiRequest = async (messageText) => {
+        return console.log("portfolio api 전송!");
+        
+    };
+
+    //  // 포트폴리오 전용 API 요청 함수
+    //  const handlePortfolioApiRequest = async (messageText) => {
+    //     const response =  await axios.post('http://localhost:5000/api/portfolio', {
+       
+    //         message: messageText
+    //     });
+        
+    //     if (!response.ok) {
+    //         throw new Error('Portfolio API request failed');
+    //     }
+        
+    //     return await response.json();
+    // };
 
     // Regenerate 처리
     const handleRegenerate = async () => {
