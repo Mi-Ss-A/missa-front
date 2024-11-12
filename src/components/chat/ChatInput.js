@@ -4,6 +4,7 @@ import axios from 'axios';
 
 const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMessage }, ref) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [isWaitingForPeriod, setIsWaitingForPeriod] = useState(false); //포트폴리오 기간 설정 상태 
     const textareaRef = useRef(null);
 
     // API 요청 처리를 위한 공통 함수
@@ -22,6 +23,7 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
         }
     };
 
+
     // 메시지 전송 처리
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -30,19 +32,49 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
             try {
                 let responseMessage;
                 const portfolioKeywords = ['portfolio', '포트 폴리오', '포트폴리오', 'portpolio', '포폴'];
-
-                // 메시지에 포트폴리오/portfolio 단어가 포함되어 있는지 확인
-                const isPortfolioRelated = portfolioKeywords.some(keyword => 
-                    message.toLowerCase().includes(keyword.toLowerCase())
-                );
-            
-                
-                if (isPortfolioRelated) {
-                    // 포트폴리오 관련 API 호출
-                    responseMessage = await handlePortfolioApiRequest(message);
+                const periodKeywords = ['3개월', '6개월', '1년', '3달', '6달', '일년'];
+    
+                // 기간만 입력된 경우 && 이전에 포트폴리오 요청을 했던 경우
+                if (isWaitingForPeriod) {
+                    const period = periodKeywords.find(keyword => 
+                        message.toLowerCase().includes(keyword.toLowerCase())
+                    );
+                    
+                    if (period) {
+                        // 기간이 입력되면 포트폴리오 API 호출
+                        const apiResponse = await handlePortfolioApiRequest(period);
+                        responseMessage = apiResponse.message || JSON.stringify(apiResponse);
+                        setIsWaitingForPeriod(false); // 상태 초기화
+                    } else {
+                        // 기간이 아닌 다른 입력의 경우 일반 API 호출
+                        responseMessage = await handleApiRequest(message);
+                        setIsWaitingForPeriod(false); // 상태 초기화
+                    }
                 } else {
-                    // 기존 API 호출
-                    responseMessage = await handleApiRequest(message);
+                    // 포트폴리오 요청인지 확인
+                    const isPortfolioRelated = portfolioKeywords.some(keyword => 
+                        message.toLowerCase().includes(keyword.toLowerCase())
+                    );
+    
+                    if (isPortfolioRelated) {
+                        //포트폴리오 요청이면 기간 찾기 
+                        const period = periodKeywords.find(keyword => 
+                            message.toLowerCase().includes(keyword.toLowerCase())
+                        );
+    
+                        if (!period) {
+                            // 기간이 지정되지 않은 경우, 기간 선택 요청 메시지 반환
+                            responseMessage = '조회하실 기간을 선택해 주세요: 3개월, 6개월, 1년';
+                            setIsWaitingForPeriod(true); // 기간 입력 대기 상태로 설정
+                        } else {
+                            // 포트폴리오 키워드와 기간이 모두 있는 경우 portfolio API 호출
+                            const apiResponse = await handlePortfolioApiRequest(period);
+                            responseMessage = apiResponse.message || JSON.stringify(apiResponse);
+                        }
+                    } else {
+                        // 포트폴리오 관련 키워드가 없는 경우 일반 API 호출
+                        responseMessage = await handleApiRequest(message);
+                    }
                 }
                 
                 onSendMessage(message, responseMessage);
@@ -52,31 +84,64 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
                 }
             } catch (error) {
                 console.error('Error sending message:', error);
+                setIsWaitingForPeriod(false); // 에러 발생 시 상태 초기화
             } finally {
                 setIsLoading(false);
             }
         }
     };
-
-    // 포트폴리오 전용 API 요청 함수
-    const handlePortfolioApiRequest = async (messageText) => {
-        return console.log("portfolio api 전송!");
-        
+    const handlePortfolioApiRequest = async (period) => {
+        try {
+            let periodValue;
+            switch (period) {
+                case '3개월':
+                case '3달':
+                    periodValue = '3m';
+                    break;
+                case '6개월':
+                case '6달':
+                    periodValue = '6m';
+                    break;
+                case '1년':
+                case '일년':
+                    periodValue = '1y';
+                    break;
+                default:
+                    periodValue = '3m';
+            }
+    
+            console.log(periodValue); // 디버깅용 로그
+    
+            // 테스트를 위한 임시 응답
+            return {
+                message: `${period} 기간의 포트폴리오 데이터를 조회합니다.`
+            };
+    
+            // API 연동 시 사용할 코드
+            /*
+            const response = await axios.post('http://localhost:5000/api/portfolio', {
+                period: periodValue
+            });
+    
+            if (response.status !== 200) {
+                throw new Error('Portfolio API request failed');
+            }
+    
+            if (typeof response.data === 'object') {
+                return {
+                    message: response.data.message || JSON.stringify(response.data)
+                };
+            }
+    
+            return {
+                message: response.data
+            };
+            */
+        } catch (error) {
+            console.error('Error:', error);
+            throw new Error('Portfolio API request failed');
+        }
     };
-
-    //  // 포트폴리오 전용 API 요청 함수
-    //  const handlePortfolioApiRequest = async (messageText) => {
-    //     const response =  await axios.post('http://localhost:5000/api/portfolio', {
-       
-    //         message: messageText
-    //     });
-        
-    //     if (!response.ok) {
-    //         throw new Error('Portfolio API request failed');
-    //     }
-        
-    //     return await response.json();
-    // };
 
     // Regenerate 처리
     const handleRegenerate = async () => {
