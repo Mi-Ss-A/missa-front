@@ -26,9 +26,11 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
 
     const periodKeywords = ['3개월', '6개월', '1년', '3달', '6달', '일년', '3', '6', '12','1'];
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (message.trim()) {
+    const handleSubmit = async (e, initialMessage = null) => {
+        if (e) e.preventDefault();
+
+        const messageToSend = initialMessage || message;
+        if (messageToSend.trim()) {
             setIsLoading(true);
             try {
                 let responseMessage;
@@ -36,7 +38,7 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
 
                 // 기간만 입력된 경우 && 이전에 포트폴리오 요청을 했던 경우
                 if (isWaitingForPeriod) {
-                    const period = findPeriodKeyword(message);  // 변경된 부분
+                    const period = findPeriodKeyword(messageToSend);  // 변경된 부분
 
                     if (period) {
                         // 기간이 입력되면 포트폴리오 API 호출
@@ -51,12 +53,12 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
                 } else {
                     // 포트폴리오 요청인지 확인
                     const isPortfolioRelated = portfolioKeywords.some(keyword => 
-                        message.toLowerCase().includes(keyword.toLowerCase())
+                        messageToSend.toLowerCase().includes(keyword.toLowerCase())
                     );
 
                     if (isPortfolioRelated) {
                         // 포트폴리오 요청이면 기간 찾기
-                        const period = findPeriodKeyword(message);  // 변경된 부분
+                        const period = findPeriodKeyword(messageToSend);  // 변경된 부분
 
                         if (!period) {
                             // 기간이 지정되지 않은 경우, 기간 선택 요청 메시지 반환
@@ -69,11 +71,11 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
                         }
                     } else {
                         // 포트폴리오 관련 키워드가 없는 경우 일반 API 호출
-                        responseMessage = await handleApiRequest(message);
+                        responseMessage = await handleApiRequest(messageToSend);
                     }
                 }
 
-                onSendMessage(message, responseMessage);
+                onSendMessage(messageToSend, responseMessage);
                 setMessage('');
                 if (textareaRef.current) {
                     textareaRef.current.style.height = '40px';
@@ -173,7 +175,8 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
 
 // 부모 컴포넌트에서 접근할 수 있는 메서드 노출
     useImperativeHandle(ref, () => ({
-        handleRegenerate
+        handleRegenerate,
+        handleSubmit
     }));
 
     // 텍스트 영역 높이 자동 조정

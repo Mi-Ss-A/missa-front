@@ -9,18 +9,26 @@ const ChatPage = () => {
     const [inputMessage, setInputMessage] = useState('');
     const [lastUserMessage, setLastUserMessage] = useState('');
 
-    const initialMessages = ['궁금한 점을 입력 해보세요!', '샘플 텍스트'];
+    const initialMessages = ['금융 포트폴리오를 만들어주세요!', '여행 관련 혜택이 많은 카드를 추천해주세요!','신용대출 만기가 다가오는데 연장은 어떻게 신청 할 수 있나요?','마이너스통장의 대출이자는 언제 출금 되나요?'];
 
+    // const handleInitialButtonClick = (text) => {
+    //     setMessages((prev) => [
+    //         ...prev,
+    //         {
+    //             text,
+    //             isUser: true,
+    //             timestamp: new Date(),
+    //         },
+    //     ]);
+    //     setLastUserMessage(text);
+    // };
     const handleInitialButtonClick = (text) => {
-        setMessages((prev) => [
-            ...prev,
-            {
-                text,
-                isUser: true,
-                timestamp: new Date(),
-            },
-        ]);
         setLastUserMessage(text);
+    
+        // ChatInput의 handleSubmit 호출
+        if (chatInputRef.current) {
+            chatInputRef.current.handleSubmit(null, text);
+        }
     };
 
     // 메시지 리스트에 새 응답을 추가
@@ -76,14 +84,13 @@ const ChatPage = () => {
                         </div>
                     )}
 
-                    {/* 초기 버튼들 */}
-                    {messages.length === 0 && (
-                        <div className="space-y-4">
+                {messages.length === 0 && (
+                        <div className="space-y-4 flex flex-col items-center">
                             {initialMessages.map((text, index) => (
                                 <button
                                     key={index}
                                     onClick={() => handleInitialButtonClick(text)}
-                                    className="w-full p-4 text-left bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                                    className="w-2/5 p-8 text-center bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
                                 >
                                     {text}
                                 </button>
