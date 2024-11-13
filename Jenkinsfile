@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "been980804/wibee-frontend:test-1"
+        DOCKER_IMAGE = "been980804/wibee-frontend:test-2"
         DEPLOYMENT_REPO = 'https://github.com/Mi-Ss-A/wibeechat-argocd-config'
     }
 
