@@ -2,9 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "been980804/wibee-frontend:test-1"
+        DOCKER_IMAGE = "been980804/wibee-frontend:test-2"
         DEPLOYMENT_REPO = 'https://github.com/Mi-Ss-A/wibeechat-argocd-config'
-        GIT_CREDENTIALS = credentials('git-token')
     }
 
     stages {
@@ -28,7 +27,7 @@ pipeline {
         stage('Update K8S Manifest') {
             steps {
                 dir('k8s-manifest') {
-                    git url: DEPLOYMENT_REPO, branch: 'test', credentialsId: GIT_CREDENTIALS
+                    git url: DEPLOYMENT_REPO, branch: 'test', credentialsId: 'git-token'
                     sh '''
                     sed -i "s|image: .*$|image: ${DOCKER_IMAGE}|" front-end/deployment.yaml
                     git config user.name "been980804"
