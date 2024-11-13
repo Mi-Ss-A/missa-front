@@ -38,13 +38,13 @@ pipeline {
             steps {
                 dir('k8s-manifest') {
                     git url: DEPLOYMENT_REPO, branch: 'test', credentialsId: GIT_CREDENTIALS
-                    sh """
-                    sed -i 's|image: .*\\$|image: ${DOCKER_IMAGE}|' front-end/deployment.yaml
+                    sh '''
+                    sed -i "s|image: .*$|image: ${DOCKER_IMAGE}|" front-end/deployment.yaml
                     git config user.name "been980804"
                     git config user.email "dlgusqls980804@naver.com"
                     git commit -am "Update image to ${DOCKER_IMAGE}"
                     git push origin main
-                    """
+                    '''
                 }
             }
         }
