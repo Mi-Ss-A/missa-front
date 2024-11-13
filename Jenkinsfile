@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "been980804/wibee-frontend:test-1"
-        DOCKER_CREDENTIALS = credentials('docker-token')
         DEPLOYMENT_REPO = 'https://github.com/Mi-Ss-A/wibeechat-argocd-config'
         GIT_CREDENTIALS = credentials('git-token')
     }
@@ -18,7 +17,7 @@ pipeline {
         stage('Build Docker image & Push') {
             steps {
                 script {
-                    docker.withRegistry("https://index.docker.io/v1/", DOCKER_CREDENTIALS) {
+                    docker.withRegistry("https://registry.hub.docker.com", 'docker-token') {
                         def app = docker.build("${DOCKER_IMAGE}", "-f Dockerfile .")
                         app.push()
                     }
