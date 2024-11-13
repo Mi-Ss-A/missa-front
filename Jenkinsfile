@@ -18,7 +18,7 @@ pipeline {
         stage('Build Docker image & Push') {
             steps {
                 script {
-                    docker.withRegistry(DOCKER_CREDENTIALS) {
+                    docker.withRegistry("https://index.docker.io/v1/", DOCKER_CREDENTIALS) {
                         def app = docker.build("${DOCKER_IMAGE}", "-f Dockerfile .")
                         app.push()
                     }
