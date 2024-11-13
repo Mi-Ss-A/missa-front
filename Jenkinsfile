@@ -5,7 +5,7 @@ pipeline {
         DOCKER_IMAGE = "been980804/wibee-frontend:test-1"
         DOCKER_CREDENTIALS = credentials('been980804')
         DEPLOYMENT_REPO = 'https://github.com/Mi-Ss-A/wibeechat-argocd-config'
-        GIT_CREDENTIALS = credentials('github-token-test')
+        GIT_CREDENTIALS = credentials('git-token')
     }
 
     stages {
