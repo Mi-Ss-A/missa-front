@@ -23,72 +23,88 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
         }
     };
 
+    // 포트폴리오 요청 처리 공통 함수
+const processPortfolioRequest = async (messageText) => {
+    const portfolioKeywords = ['portfolio', '포트 폴리오', '포트폴리오', 'portpolio', '포폴','vhvhf','vhxmvhffldh'];
+    const period = findPeriodKeyword(messageText); // 기간 추출
 
-    const periodKeywords = ['3개월', '6개월', '1년', '3달', '6달', '일년', '3', '6', '12','1'];
+    if (portfolioKeywords.some(keyword => messageText.toLowerCase().includes(keyword.toLowerCase()))) {
+        if (!period) {
+            // 기간이 없으면 기간 입력을 요청
+            return { 
+                message: '조회하실 기간을 선택해 주세요: 3개월, 6개월, 1년',
+                isWaitingForPeriod: true
+            };
+        } else {
+            // 기간이 있으면 포트폴리오 API 호출
+            const apiResponse = await handlePortfolioApiRequest(period);
+            return { message: apiResponse.message || JSON.stringify(apiResponse), isWaitingForPeriod: false };
+        }
+    }
 
-    const handleSubmit = async (e, initialMessage = null) => {
-        if (e) e.preventDefault();
+    // 포트폴리오 관련 키워드가 없으면 일반 API 호출
+    const response = await handleApiRequest(messageText);
+    return { message: response, isWaitingForPeriod: false };
+};
 
-        const messageToSend = initialMessage || message;
-        if (messageToSend.trim()) {
+const handleSubmit = async (e, initialMessage = null) => {
+    if (e) e.preventDefault();
+
+    const messageToSend = initialMessage || message;
+    if (messageToSend.trim()) {
+        setIsLoading(true);
+        try {
+            let responseMessage;
+            let isWaitingForPeriod = false; // 기간 대기 상태 초기화
+
+            // 포트폴리오 요청 처리
+            const { message: response, isWaitingForPeriod: waitForPeriod } = await processPortfolioRequest(messageToSend);
+            responseMessage = response;
+            isWaitingForPeriod = waitForPeriod;
+
+            // 메시지 전송 및 상태 업데이트
+            onSendMessage(messageToSend, responseMessage);
+            setMessage('');
+            if (textareaRef.current) {
+                textareaRef.current.style.height = '40px';
+            }
+
+            setIsWaitingForPeriod(isWaitingForPeriod); // 상태 업데이트
+        } catch (error) {
+            console.error('Error sending message:', error);
+            setIsWaitingForPeriod(false); // 에러 발생 시 상태 초기화
+        } finally {
+            setIsLoading(false);
+        }
+    }
+};
+// Regenerate 처리
+    const handleRegenerate = async () => {
+        if (lastUserMessage) {
             setIsLoading(true);
             try {
                 let responseMessage;
-                const portfolioKeywords = ['portfolio', '포트 폴리오', '포트폴리오', 'portpolio', '포폴'];
+                let isWaitingForPeriod = false;
 
-                // 기간만 입력된 경우 && 이전에 포트폴리오 요청을 했던 경우
-                if (isWaitingForPeriod) {
-                    const period = findPeriodKeyword(messageToSend);  // 변경된 부분
+                // 포트폴리오 요청 처리
+                const { message: response, isWaitingForPeriod: waitForPeriod } = await processPortfolioRequest(lastUserMessage);
+                responseMessage = response;
+                isWaitingForPeriod = waitForPeriod;
 
-                    if (period) {
-                        // 기간이 입력되면 포트폴리오 API 호출
-                        const apiResponse = await handlePortfolioApiRequest(period);
-                        responseMessage = apiResponse.message || JSON.stringify(apiResponse);
-                        setIsWaitingForPeriod(false); // 상태 초기화
-                    } else {
-                        // 기간이 아닌 다른 입력의 경우 일반 API 호출
-                        responseMessage = await handleApiRequest(message);
-                        setIsWaitingForPeriod(false); // 상태 초기화
-                    }
-                } else {
-                    // 포트폴리오 요청인지 확인
-                    const isPortfolioRelated = portfolioKeywords.some(keyword => 
-                        messageToSend.toLowerCase().includes(keyword.toLowerCase())
-                    );
-
-                    if (isPortfolioRelated) {
-                        // 포트폴리오 요청이면 기간 찾기
-                        const period = findPeriodKeyword(messageToSend);  // 변경된 부분
-
-                        if (!period) {
-                            // 기간이 지정되지 않은 경우, 기간 선택 요청 메시지 반환
-                            responseMessage = '조회하실 기간을 선택해 주세요: 3개월, 6개월, 1년';
-                            setIsWaitingForPeriod(true); // 기간 입력 대기 상태로 설정
-                        } else {
-                            // 포트폴리오 키워드와 기간이 모두 있는 경우 portfolio API 호출
-                            const apiResponse = await handlePortfolioApiRequest(period);
-                            responseMessage = apiResponse.message || JSON.stringify(apiResponse);
-                        }
-                    } else {
-                        // 포트폴리오 관련 키워드가 없는 경우 일반 API 호출
-                        responseMessage = await handleApiRequest(messageToSend);
-                    }
+                if (responseMessage) {
+                    onSendMessage(lastUserMessage, responseMessage);
                 }
 
-                onSendMessage(messageToSend, responseMessage);
-                setMessage('');
-                if (textareaRef.current) {
-                    textareaRef.current.style.height = '40px';
-                }
+                setIsWaitingForPeriod(isWaitingForPeriod); // 상태 업데이트
             } catch (error) {
-                console.error('Error sending message:', error);
-                setIsWaitingForPeriod(false); // 에러 발생 시 상태 초기화
+                console.error('Error regenerating response:', error);
             } finally {
                 setIsLoading(false);
             }
         }
     };
 
+    const periodKeywords =   ['3개월', '6개월', '1년', '3달', '6달', '일년', '3', '6', '12','1'];
     // Helper 함수로 숫자 입력을 기간으로 변환
     const findPeriodKeyword = (message) => {
         // '3', '6', '12' 숫자 문자열을 기간 키워드로 매핑
@@ -129,9 +145,6 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
             // return {
             //     message: `${period} 기간의 포트폴리오 데이터를 조회합니다.`
             // };
-    
-            // API 연동 시 사용할 코드
-            
             const response = await axios.post('http://localhost:8082/api/portfolio', { //portfoliosvc server
                 period: periodValue
             });
@@ -156,22 +169,22 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
         }
     };
 
-    // Regenerate 처리
-    const handleRegenerate = async () => {
-        if (lastUserMessage) {
-            setIsLoading(true);
-            try {
-                const regeneratedMessage = await handleApiRequest(lastUserMessage);
-                if (regeneratedMessage) {
-                    onSendMessage(lastUserMessage, regeneratedMessage);
-                }
-            } catch (error) {
-                console.error('Error regenerating response:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        }
-    };
+    // // Regenerate 처리
+    // const handleRegenerate = async () => {
+    //     if (lastUserMessage) {
+    //         setIsLoading(true);
+    //         try {
+    //             const regeneratedMessage = await handleApiRequest(lastUserMessage);
+    //             if (regeneratedMessage) {
+    //                 onSendMessage(lastUserMessage, regeneratedMessage);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error regenerating response:', error);
+    //         } finally {
+    //             setIsLoading(false);
+    //         }
+    //     }
+    // };
 
 // 부모 컴포넌트에서 접근할 수 있는 메서드 노출
     useImperativeHandle(ref, () => ({
