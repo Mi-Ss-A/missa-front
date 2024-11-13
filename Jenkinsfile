@@ -2,8 +2,9 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "been980804/wibee-frontend:test-2"
+        DOCKER_IMAGE = "been980804/wibee-frontend:test-3"
         DEPLOYMENT_REPO = 'https://github.com/Mi-Ss-A/wibeechat-argocd-config'
+        GIT_CREDENTIALS = credentials('git-token')
     }
 
     stages {
@@ -33,7 +34,7 @@ pipeline {
                     git config user.name "been980804"
                     git config user.email "dlgusqls980804@naver.com"
                     git commit -am "Update image to ${DOCKER_IMAGE}"
-                    git push origin test
+                    git push https://${GIT_CREDENTIALS_USR}:${GIT_CREDENTIALS_PSW}@github.com/Mi-Ss-A/wibeechat-argocd-config test
                     '''
                 }
             }
