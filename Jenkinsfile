@@ -33,7 +33,7 @@ pipeline {
                     git config user.name "been980804"
                     git config user.email "dlgusqls980804@naver.com"
                     git commit -am "Update image to ${DOCKER_IMAGE}"
-                    git push origin main
+                    git push origin test
                     '''
                 }
             }
