@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = "been980804/wibee-frontend:test-1"
-        DOCKER_CREDENTIALS = credentials('been980804')
+        DOCKER_CREDENTIALS = credentials('docker-token')
         DEPLOYMENT_REPO = 'https://github.com/Mi-Ss-A/wibeechat-argocd-config'
         GIT_CREDENTIALS = credentials('git-token')
     }
@@ -12,14 +12,6 @@ pipeline {
         stage('Checkout Source') {
             steps {
                 checkout scm
-            }
-        }
-
-        stage('Build Docker image') {
-            steps {
-                script {
-                    docker.build("${DOCKER_IMAGE}")
-                }
             }
         }
 
