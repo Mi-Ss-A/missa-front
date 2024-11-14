@@ -16,7 +16,7 @@ const root = createBrowserRouter([
         path: '',
         element: (
             <Suspense fallback={Loading}>
-                <Main />
+                <Splash />
             </Suspense>
         ),
     },
@@ -45,14 +45,6 @@ const root = createBrowserRouter([
         ),
     },
     {
-        path: 'splash',
-        element: (
-            <Suspense fallback={Loading}>
-                <Splash />
-            </Suspense>
-        ),
-    },
-    {
         path: 'login',
         element: (
             <Suspense fallback={Loading}>
@@ -76,5 +68,18 @@ const root = createBrowserRouter([
             </Suspense>
         ),
     },
-]);
+    {
+        path: '',
+        element: (
+            <Suspense fallback={Loading}>
+                <Splash />
+            </Suspense>
+        ),
+    },
+],
+{
+    basename: "/"
+    }
+);
+
 export default root;
