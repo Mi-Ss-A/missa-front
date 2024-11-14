@@ -2,9 +2,11 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = "been980804/wibee-frontend:test-3"
+        IMAGE_NAME = "been980804/wibee-frontend"
         DEPLOYMENT_REPO = 'https://github.com/Mi-Ss-A/wibeechat-argocd-config'
         GIT_CREDENTIALS = credentials('git-token')
+        TAG = "test-${BUILD_NUMBER}" // Jenkins 빌드 넘버로 자동 증가되는 태그
+        DOCKER_IMAGE = "${IMAGE_NAME}:${TAG}"
     }
 
     stages {
