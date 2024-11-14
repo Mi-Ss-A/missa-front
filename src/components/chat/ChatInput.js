@@ -24,27 +24,40 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
     };
 
     // 포트폴리오 요청 처리 공통 함수
-const processPortfolioRequest = async (messageText) => {
+const processPortfolioRequest = async (messageText,isWaiting = false) => {
     const portfolioKeywords = ['portfolio', '포트 폴리오', '포트폴리오', 'portpolio', '포폴','vhvhf','vhxmvhffldh'];
     const period = findPeriodKeyword(messageText); // 기간 추출
 
+    // 포트폴리오 요청 && 기간입력
+    if(isWaiting && period){
+        const
+         apiResponse = await handlePortfolioApiRequest(period);
+        return{
+            message:apiResponse.message || JSON.stringify(apiResponse),
+            isWaitingForPeriod:false //상태값 초기화 
+        };
+    }
+
+    // 포트폴리오 키워드 
     if (portfolioKeywords.some(keyword => messageText.toLowerCase().includes(keyword.toLowerCase()))) {
         if (!period) {
-            // 기간이 없으면 기간 입력을 요청
-            return { 
+            return {
                 message: '조회하실 기간을 선택해 주세요: 3개월, 6개월, 1년',
                 isWaitingForPeriod: true
             };
         } else {
-            // 기간이 있으면 포트폴리오 API 호출
             const apiResponse = await handlePortfolioApiRequest(period);
-            return { message: apiResponse.message || JSON.stringify(apiResponse), isWaitingForPeriod: false };
+            return {
+                message: apiResponse.message || JSON.stringify(apiResponse),
+                isWaitingForPeriod: false
+            };
         }
+
     }
 
-    // 포트폴리오 관련 키워드가 없으면 일반 API 호출
+    //포트폴리오 관련 키워드 아닐때 
     const response = await handleApiRequest(messageText);
-    return { message: response, isWaitingForPeriod: false };
+    return {message:response, isWaitingForPeriod:false };
 };
 
 const handleSubmit = async (e, initialMessage = null) => {
@@ -54,25 +67,19 @@ const handleSubmit = async (e, initialMessage = null) => {
     if (messageToSend.trim()) {
         setIsLoading(true);
         try {
-            let responseMessage;
-            let isWaitingForPeriod = false; // 기간 대기 상태 초기화
-
-            // 포트폴리오 요청 처리
-            const { message: response, isWaitingForPeriod: waitForPeriod } = await processPortfolioRequest(messageToSend);
-            responseMessage = response;
-            isWaitingForPeriod = waitForPeriod;
-
-            // 메시지 전송 및 상태 업데이트
+            const { message: responseMessage, isWaitingForPeriod: waitForPeriod } = 
+                await processPortfolioRequest(messageToSend, isWaitingForPeriod);
+            
             onSendMessage(messageToSend, responseMessage);
+            setIsWaitingForPeriod(waitForPeriod);
             setMessage('');
             if (textareaRef.current) {
                 textareaRef.current.style.height = '40px';
             }
-
-            setIsWaitingForPeriod(isWaitingForPeriod); // 상태 업데이트
         } catch (error) {
             console.error('Error sending message:', error);
-            setIsWaitingForPeriod(false); // 에러 발생 시 상태 초기화
+            onSendMessage(messageToSend, '죄송합니다. 오류가 발생했습니다.');
+            setIsWaitingForPeriod(false);
         } finally {
             setIsLoading(false);
         }
@@ -83,21 +90,16 @@ const handleSubmit = async (e, initialMessage = null) => {
         if (lastUserMessage) {
             setIsLoading(true);
             try {
-                let responseMessage;
-                let isWaitingForPeriod = false;
-
                 // 포트폴리오 요청 처리
-                const { message: response, isWaitingForPeriod: waitForPeriod } = await processPortfolioRequest(lastUserMessage);
-                responseMessage = response;
-                isWaitingForPeriod = waitForPeriod;
+                const { message: responseMessage, isWaitingForPeriod: waitForPeriod } = await processPortfolioRequest(lastUserMessage,isWaitingForPeriod);
+                
+                onSendMessage(lastUserMessage, responseMessage);
+                setIsWaitingForPeriod(waitForPeriod);
 
-                if (responseMessage) {
-                    onSendMessage(lastUserMessage, responseMessage);
-                }
-
-                setIsWaitingForPeriod(isWaitingForPeriod); // 상태 업데이트
             } catch (error) {
                 console.error('Error regenerating response:', error);
+                onSendMessage(lastUserMessage, '죄송합니다. 오류가 발생했습니다.');
+                setIsWaitingForPeriod(false);
             } finally {
                 setIsLoading(false);
             }
@@ -168,23 +170,6 @@ const handleSubmit = async (e, initialMessage = null) => {
             throw new Error('Portfolio API request failed');
         }
     };
-
-    // // Regenerate 처리
-    // const handleRegenerate = async () => {
-    //     if (lastUserMessage) {
-    //         setIsLoading(true);
-    //         try {
-    //             const regeneratedMessage = await handleApiRequest(lastUserMessage);
-    //             if (regeneratedMessage) {
-    //                 onSendMessage(lastUserMessage, regeneratedMessage);
-    //             }
-    //         } catch (error) {
-    //             console.error('Error regenerating response:', error);
-    //         } finally {
-    //             setIsLoading(false);
-    //         }
-    //     }
-    // };
 
 // 부모 컴포넌트에서 접근할 수 있는 메서드 노출
     useImperativeHandle(ref, () => ({
