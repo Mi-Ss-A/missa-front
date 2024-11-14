@@ -9,6 +9,7 @@ const History = lazy(() => import('../pages/HistoryPage'));
 const Login = lazy(() => import('../pages/LoginPage'));
 const Onboarding = lazy(() => import('../pages/OnBoardingPage'));
 const Splash = lazy(() => import('../pages/SplashPage'));
+const ChatHistoryDetail = lazy(() => import('../pages/ChatHistoryDetail'));
 
 const root = createBrowserRouter([
     {
@@ -64,6 +65,14 @@ const root = createBrowserRouter([
         element: (
             <Suspense fallback={Loading}>
                 <Onboarding />
+            </Suspense>
+        ),
+    },
+    {
+        path: 'history/:date', // 히스토리 상세 페이지 라우트 추가
+        element: (
+            <Suspense fallback={Loading}>
+                <ChatHistoryDetail />
             </Suspense>
         ),
     },
