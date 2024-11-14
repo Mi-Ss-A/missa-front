@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import BasicLayout from '../layouts/BasicLayout';
-
+import { useParams, useNavigate } from 'react-router-dom';
 const HistoryPage = () => {
     const [dates, setDates] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
+    const handleDateClick = (date) => {
+        navigate(`/history/${date}`);
+    };
     useEffect(() => {
         const fetchHistoryDates = async () => {
             try {
@@ -90,11 +94,7 @@ const HistoryPage = () => {
                                 <div
                                     key={`${group}-${index}`}
                                     className="w-full p-4 text-left bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors cursor-pointer"
-                                    onClick={() => {
-                                        // 해당 날짜의 대화 내용을 보여주는 페이지로 이동하거나
-                                        // 모달을 열어서 보여줄 수 있습니다.
-                                        console.log(date.original);
-                                    }}
+                                    onClick={() => handleDateClick(date.original)}
                                 >
                                     <div className="flex justify-between items-center">
                                         <span>{date.display}</span>
