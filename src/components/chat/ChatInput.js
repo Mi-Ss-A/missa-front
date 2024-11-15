@@ -10,7 +10,7 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
     // API 요청 처리를 위한 공통 함수
     const handleApiRequest = async (messageText) => {
         try {
-            const response = await axios.post('http://localhost:5000/api/chat', {
+            const response = await axios.post(process.env.REACT_APP_CHAT_API_URL, {
                 message: messageText
             });
 
@@ -147,7 +147,7 @@ const handleSubmit = async (e, initialMessage = null) => {
             // return {
             //     message: `${period} 기간의 포트폴리오 데이터를 조회합니다.`
             // };
-            const response = await axios.post('http://localhost:8082/api/portfolio', { //portfoliosvc server
+            const response = await axios.post(process.env.REACT_APP_PORTFOLIO_API_URL, { //portfoliosvc server
                 period: periodValue
             });
     
