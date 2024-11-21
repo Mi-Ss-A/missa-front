@@ -10,38 +10,27 @@ const LoginPage = () => {
 
     const handleLogin = async (userId, userPassword) => {
         setLoading(true);
-        setError(null); // 이전 오류를 초기화
+        setError(null);
         try {
             const response = await axios.post(
-                'http://localhost:8081/api/users/login', // 로그인 API 엔드포인트
-                {
-                    userId: userId,
-                    userPassword: userPassword,
-                },
-                {
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    withCredentials: true, // 쿠키를 포함하도록 설정
-                }
+                'http://localhost:8081/api/users/login',
+                { userId, userPassword },
+                { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
             );
-            console.log('response.data: ', response.data); // 응답 데이터 확인
             if (response.data.success) {
-                // 로그인 성공 시, 사용자를 채팅 페이지로 리다이렉트
                 navigate('/chat');
             } else {
-                // 로그인 실패 시, 오류 메시지 처리
-                setError('로그인 실패. 아이디 또는 비밀번호를 확인해주세요.');
+                setError('Invalid credentials.');
             }
-        } catch (error) {
-            setError('서버와의 연결에 문제가 발생했습니다.');
+        } catch {
+            setError('Server error occurred.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="flex flex-col justify-center items-center h-screen p-12 bg-gradient-to-br from-transparent via-blue-400/30 to-white rounded-lg mx-auto text-center relative">
+        <div className="flex flex-col justify-between items-center h-screen p-12 bg-white bg-gradient-to-br from-transparent via-blue-400/30 to-white text-center relative">
             {/* 로고 */}
             <div className="w-full max-w-xs mb-8 flex justify-center z-10">
                 <div
@@ -51,7 +40,8 @@ const LoginPage = () => {
             </div>
 
             {/* 로그인 폼 */}
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg">
+                <h1 className="text-2xl font-bold text-blue-900 mb-6">Login to WIBEECHAT</h1>
                 <LoginForm onLogin={handleLogin} error={error} loading={loading} />
             </div>
         </div>
