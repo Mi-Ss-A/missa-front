@@ -43,12 +43,14 @@ const processPortfolioRequest = async (messageText,isWaiting = false) => {
         if (!period) {
             return {
                 message: '조회하실 기간을 선택해 주세요: 3개월, 6개월, 1년',
+                portfolioUrls: [],
                 isWaitingForPeriod: true
             };
         } else {
             const apiResponse = await handlePortfolioApiRequest(period);
             return {
                 message: apiResponse.message || JSON.stringify(apiResponse),
+                portfolioUrls: apiResponse.portfolioUrls || [],
                 isWaitingForPeriod: false
             };
         }
@@ -57,34 +59,34 @@ const processPortfolioRequest = async (messageText,isWaiting = false) => {
 
     //포트폴리오 관련 키워드 아닐때 
     const response = await handleApiRequest(messageText);
-    return {message:response, isWaitingForPeriod:false };
+    return {message:response, portfolioUrls: [], isWaitingForPeriod:false };
 };
 
-const handleSubmit = async (e, initialMessage = null) => {
-    if (e) e.preventDefault();
+// const handleSubmit = async (e, initialMessage = null) => {
+//     if (e) e.preventDefault();
 
-    const messageToSend = initialMessage || message;
-    if (messageToSend.trim()) {
-        setIsLoading(true);
-        try {
-            const { message: responseMessage, isWaitingForPeriod: waitForPeriod } = 
-                await processPortfolioRequest(messageToSend, isWaitingForPeriod);
+//     const messageToSend = initialMessage || message;
+//     if (messageToSend.trim()) {
+//         setIsLoading(true);
+//         try {
+//             const { message: responseMessage, isWaitingForPeriod: waitForPeriod } = 
+//                 await processPortfolioRequest(messageToSend, isWaitingForPeriod);
             
-            onSendMessage(messageToSend, responseMessage);
-            setIsWaitingForPeriod(waitForPeriod);
-            setMessage('');
-            if (textareaRef.current) {
-                textareaRef.current.style.height = '40px';
-            }
-        } catch (error) {
-            console.error('Error sending message:', error);
-            onSendMessage(messageToSend, '죄송합니다. 오류가 발생했습니다.');
-            setIsWaitingForPeriod(false);
-        } finally {
-            setIsLoading(false);
-        }
-    }
-};
+//             onSendMessage(messageToSend, responseMessage);
+//             setIsWaitingForPeriod(waitForPeriod);
+//             setMessage('');
+//             if (textareaRef.current) {
+//                 textareaRef.current.style.height = '40px';
+//             }
+//         } catch (error) {
+//             console.error('Error sending message:', error);
+//             onSendMessage(messageToSend, '죄송합니다. 오류가 발생했습니다.');
+//             setIsWaitingForPeriod(false);
+//         } finally {
+//             setIsLoading(false);
+//         }
+//     }
+// };
 // Regenerate 처리
     const handleRegenerate = async () => {
         if (lastUserMessage) {
@@ -120,56 +122,101 @@ const handleSubmit = async (e, initialMessage = null) => {
         );
     };
 
+    // const handlePortfolioApiRequest = async (period) => {
+    //     try {
+    //         let periodValue;
+    //         switch (period) {
+    //             case '3개월':
+    //             case '3달':
+    //                 periodValue = '3m';
+    //                 break;
+    //             case '6개월':
+    //             case '6달':
+    //                 periodValue = '6m';
+    //                 break;
+    //             case '1년':
+    //             case '일년':
+    //             case '1':
+    //                 periodValue = '1y';
+    //                 break;
+    //             default:
+    //                 periodValue = '1y';
+    //         }
+    
+    //         console.log(periodValue); // 디버깅용 로그
+    
+    //         // // 테스트를 위한 임시 응답
+    //         // return {
+    //         //     message: `${period} 기간의 포트폴리오 데이터를 조회합니다.`
+    //         // };
+    //         const response = await axios.post('http://localhost:5000/api/portfolio', { 
+    //             period: periodValue
+    //         });
+    
+    //         if (response.status !== 200) {
+    //             throw new Error('Portfolio API request failed');
+    //         }
+    
+    //         if (typeof response.data === 'object') {
+    //             return {
+    //                 message: response.data.message || JSON.stringify(response.data)
+    //             };
+    //         }
+    
+    //         return {
+    //             message: response.data
+    //         };
+            
+    //     } catch (error) {
+    //         console.error('Error:', error);
+    //         throw new Error('Portfolio API request failed');
+    //     }
+    // };
+
     const handlePortfolioApiRequest = async (period) => {
         try {
-            let periodValue;
-            switch (period) {
-                case '3개월':
-                case '3달':
-                    periodValue = '3m';
-                    break;
-                case '6개월':
-                case '6달':
-                    periodValue = '6m';
-                    break;
-                case '1년':
-                case '일년':
-                case '1':
-                    periodValue = '1y';
-                    break;
-                default:
-                    periodValue = '1y';
-            }
-    
-            console.log(periodValue); // 디버깅용 로그
-    
-            // // 테스트를 위한 임시 응답
-            // return {
-            //     message: `${period} 기간의 포트폴리오 데이터를 조회합니다.`
-            // };
-            const response = await axios.post('http://localhost:8082/api/portfolio', { //portfoliosvc server
-                period: periodValue
-            });
+            const periodValue = period === '3개월' ? '3m' : period === '6개월' ? '6m' : '1y';
+            const response = await axios.post('http://localhost:5000/api/portfolio', { period: periodValue });
     
             if (response.status !== 200) {
                 throw new Error('Portfolio API request failed');
             }
     
-            if (typeof response.data === 'object') {
-                return {
-                    message: response.data.message || JSON.stringify(response.data)
-                };
-            }
-    
-            return {
-                message: response.data
-            };
-            
+            return response.data; // { message, portfolioUrls }
         } catch (error) {
             console.error('Error:', error);
             throw new Error('Portfolio API request failed');
         }
     };
+    
+    
+    const handleSubmit = async (e, initialMessage = null) => {
+        if (e) e.preventDefault();
+    
+        const messageToSend = initialMessage || message;
+        if (messageToSend.trim()) {
+            setIsLoading(true);
+            try {
+                const { message: responseMessage, portfolioUrls = [], isWaitingForPeriod: waitForPeriod } =
+                    await processPortfolioRequest(messageToSend, isWaitingForPeriod);
+    
+                // 메시지와 URL 리스트를 렌더링
+                onSendMessage(messageToSend, responseMessage, portfolioUrls);
+                setIsWaitingForPeriod(waitForPeriod);
+                setMessage('');
+                if (textareaRef.current) {
+                    textareaRef.current.style.height = '40px';
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                onSendMessage(messageToSend, '죄송합니다. 오류가 발생했습니다.');
+                setIsWaitingForPeriod(false);
+            } finally {
+                setIsLoading(false);
+            }
+        }
+    };
+    
 
 // 부모 컴포넌트에서 접근할 수 있는 메서드 노출
     useImperativeHandle(ref, () => ({

@@ -25,7 +25,7 @@ const ChatPage = () => {
         }
     };
 
-    const handleSendMessage = (userMessage, responseMessage) => {
+    const handleSendMessage = (userMessage, responseMessage, portfolioUrls =[]) => {
         setLastUserMessage(userMessage);
         setMessages((prev) => [
             ...prev,
@@ -39,6 +39,11 @@ const ChatPage = () => {
                 isUser: false,
                 timestamp: new Date(),
             },
+            ...portfolioUrls.map((url) => ({
+                text: url,
+                isUser: false,
+                timestamp: new Date(),
+            })),
         ]);
     };
 
