@@ -1,6 +1,39 @@
 import ReactMarkdown from 'react-markdown';
 
 const ChatMessage = ({ text, isUser }) => {
+    // URL인지 확인하는 정규식
+    const isUrl = (str) => {
+        const urlPattern = new RegExp(
+            '^(https?:\\/\\/)?' + // protocol
+            '((([a-zA-Z\\d]([a-zA-Z\\d-]*[a-zA-Z\\d])*)\\.)+[a-zA-Z]{2,}|' + // domain name
+            '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+            '(\\:\\d+)?(\\/[-a-zA-Z\\d%_.~+]*)*' + // port and path
+            '(\\?[;&a-zA-Z\\d%_.~+=-]*)?' + // query string
+            '(\\#[-a-zA-Z\\d_]*)?$', // fragment locator
+            'i'
+        );
+        return !!urlPattern.test(str);
+    };
+
+    // URL 렌더링을 지원하는 마크다운 렌더러
+    const renderMarkdown = (content) => {
+        if (isUrl(content.trim())) {
+            return (
+                <a
+                    href={content.trim()}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 underline hover:text-blue-700"
+                >
+                    {content.trim()}
+                </a>
+            );
+        }
+
+        // 기본 ReactMarkdown 처리
+        return <ReactMarkdown>{content}</ReactMarkdown>;
+    };
+
     return (
         <div className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}>
             {/* 봇 프로필 아이콘 */}
@@ -19,12 +52,11 @@ const ChatMessage = ({ text, isUser }) => {
                             : 'bg-white text-gray-800 rounded-bl-none'
                     }`}
                     style={{
-                        wordBreak: 'break-word',  // 긴 단어도 강제로 줄바꿈
+                        wordBreak: 'break-word', // 긴 단어도 강제로 줄바꿈
                         overflowWrap: 'break-word', // 필요한 경우 단어 중간에서도 줄바꿈
                     }}
                 >
-                    {/* 마크다운 렌더링 */}
-                    <ReactMarkdown>{text}</ReactMarkdown>
+                    {renderMarkdown(text)}
                 </div>
             </div>
 
