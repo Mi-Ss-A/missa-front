@@ -78,7 +78,7 @@ const root = createBrowserRouter([
     },
 ],
 {
-    basename: "/"
+    basename: "/view/"
     }
 );
 
