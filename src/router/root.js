@@ -13,7 +13,7 @@ const ChatHistoryDetail = lazy(() => import('../pages/ChatHistoryDetail'));
 
 const root = createBrowserRouter([
     {
-        path: '',
+        path: '/',
         element: (
             <Suspense fallback={Loading}>
                 <Splash />
@@ -21,7 +21,7 @@ const root = createBrowserRouter([
         ),
     },
     {
-        path: 'chat',
+        path: '/chat',
         element: (
             <Suspense fallback={Loading}>
                 <Chat />
@@ -29,7 +29,7 @@ const root = createBrowserRouter([
         ),
     },
     {
-        path: 'preference',
+        path: '/preference',
         element: (
             <Suspense fallback={Loading}>
                 <Preference />
@@ -37,7 +37,7 @@ const root = createBrowserRouter([
         ),
     },
     {
-        path: 'history',
+        path: '/history',
         element: (
             <Suspense fallback={Loading}>
                 <History />
@@ -45,7 +45,7 @@ const root = createBrowserRouter([
         ),
     },
     {
-        path: 'login',
+        path: '/login',
         element: (
             <Suspense fallback={Loading}>
                 <Login />
@@ -53,7 +53,7 @@ const root = createBrowserRouter([
         ),
     },
     {
-        path: 'onboarding',
+        path: '/onboarding',
         element: (
             <Suspense fallback={Loading}>
                 <Onboarding />
@@ -61,7 +61,7 @@ const root = createBrowserRouter([
         ),
     },
     {
-        path: 'history/:date', // 히스토리 상세 페이지 라우트 추가
+        path: '/history/:date', // 히스토리 상세 페이지 라우트 추가
         element: (
             <Suspense fallback={Loading}>
                 <ChatHistoryDetail />
@@ -69,7 +69,7 @@ const root = createBrowserRouter([
         ),
     },
     {
-        path: '',
+        path: '/',
         element: (
             <Suspense fallback={Loading}>
                 <Splash />
@@ -78,7 +78,7 @@ const root = createBrowserRouter([
     },
 ],
 {
-    basename: "/view/"
+    basename: "/view"
     }
 );
 
