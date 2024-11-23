@@ -1,7 +1,7 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../components/login/LoginForm';
-import axios from 'axios';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -28,7 +28,7 @@ const LoginPage = () => {
             console.log('response.data: ', response.data); // 응답 데이터 확인
             if (response.data.success) {
                 // 로그인 성공 시, 사용자를 채팅 페이지로 리다이렉트
-                navigate('/chat');
+                navigate('/view/chat');
             } else {
                 // 로그인 실패 시, 오류 메시지 처리
                 setError('로그인 실패. 아이디 또는 비밀번호를 확인해주세요.');

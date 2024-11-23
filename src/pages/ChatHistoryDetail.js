@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams, useNavigate } from 'react-router-dom';
-import BasicLayout from '../layouts/BasicLayout';
+import React, { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import ChatMessage from '../components/chat/ChatMessage';
+import BasicLayout from '../layouts/BasicLayout';
 
 const ChatHistoryDetail = () => {
     const [messages, setMessages] = useState([]);
@@ -17,7 +17,7 @@ const ChatHistoryDetail = () => {
                 setIsLoading(true);
                 const response = await axios.get(`http://localhost:8081/api/history`, {
                     params: { date },
-                    withCredentials: true
+                    withCredentials: true,
                 });
                 setMessages(response.data);
             } catch (err) {
@@ -43,9 +43,7 @@ const ChatHistoryDetail = () => {
     if (error) {
         return (
             <BasicLayout>
-                <div className="flex justify-center items-center h-full text-red-500">
-                    {error}
-                </div>
+                <div className="flex justify-center items-center h-full text-red-500">{error}</div>
             </BasicLayout>
         );
     }
@@ -55,11 +53,7 @@ const ChatHistoryDetail = () => {
             <div className="flex flex-col h-screen bg-blue-50">
                 {/* 로고 섹션 */}
                 <div className="flex justify-between items-center my-4 md:my-8 px-4">
-                    <button
-                        onClick={() => navigate('/history')}
-                        className="text-blue-600 hover:text-blue-800"
-                    >
-                    </button>
+                    <button onClick={() => navigate('/history')} className="text-blue-600 hover:text-blue-800"></button>
                     <div className="text-center">
                         <h1 className="text-lg md:text-xl font-bold text-blue-600">WIBEE CHAT</h1>
                         <p className="text-xs md:text-sm text-blue-400">CHAT HISTORY</p>

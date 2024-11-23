@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react';
-import BasicLayout from '../layouts/BasicLayout';
 import ChatInput from '../components/chat/ChatInput';
 import ChatMessage from '../components/chat/ChatMessage';
 import RegenerateButton from '../components/chat/RegenerateButton';
+import BasicLayout from '../layouts/BasicLayout';
 
 const ChatPage = () => {
     const [messages, setMessages] = useState([]);
@@ -18,7 +18,7 @@ const ChatPage = () => {
 
     const handleInitialButtonClick = (text) => {
         setLastUserMessage(text);
-    
+
         // ChatInput의 handleSubmit 호출
         if (chatInputRef.current) {
             chatInputRef.current.handleSubmit(null, text);

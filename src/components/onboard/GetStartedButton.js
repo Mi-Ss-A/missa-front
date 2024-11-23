@@ -6,7 +6,7 @@ const GetStartedButton = () => {
     const navigate = useNavigate(); // useNavigate 훅을 사용하여 navigate 함수 가져오기
 
     const handleClick = () => {
-        navigate('/login'); // 버튼 클릭 시 /login으로 이동
+        navigate('/view/login'); // 버튼 클릭 시 /login으로 이동
     };
 
     return (

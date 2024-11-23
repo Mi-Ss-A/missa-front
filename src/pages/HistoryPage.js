@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import BasicLayout from '../layouts/BasicLayout';
-import { useParams, useNavigate } from 'react-router-dom';
 const HistoryPage = () => {
     const [dates, setDates] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -9,20 +9,20 @@ const HistoryPage = () => {
     const navigate = useNavigate();
 
     const handleDateClick = (date) => {
-        navigate(`/history/${date}`);
+        navigate(`/view/history/${date}`);
     };
     useEffect(() => {
         const fetchHistoryDates = async () => {
             try {
                 setIsLoading(true);
                 const response = await axios.get('http://localhost:8081/api/history/dates', {
-                    withCredentials: true
+                    withCredentials: true,
                 });
 
                 // 날짜 데이터를 Today, Yesterday, 기타 날짜로 분류
-                const formattedDates = response.data.map(date => ({
+                const formattedDates = response.data.map((date) => ({
                     original: date,
-                    display: formatDate(date)
+                    display: formatDate(date),
                 }));
 
                 setDates(formattedDates);
@@ -51,31 +51,30 @@ const HistoryPage = () => {
             return new Date(dateString).toLocaleDateString('ko-KR', {
                 year: 'numeric',
                 month: 'long',
-                day: 'numeric'
+                day: 'numeric',
             });
         }
     };
 
-    if (isLoading) return (
-        <BasicLayout title="History">
-            <div className="flex justify-center items-center h-full">
-                <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900"></div>
-            </div>
-        </BasicLayout>
-    );
+    if (isLoading)
+        return (
+            <BasicLayout title="History">
+                <div className="flex justify-center items-center h-full">
+                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-gray-900"></div>
+                </div>
+            </BasicLayout>
+        );
 
-    if (error) return (
-        <BasicLayout title="History">
-            <div className="flex justify-center items-center h-full text-red-500">
-                {error}
-            </div>
-        </BasicLayout>
-    );
+    if (error)
+        return (
+            <BasicLayout title="History">
+                <div className="flex justify-center items-center h-full text-red-500">{error}</div>
+            </BasicLayout>
+        );
 
     // 날짜를 그룹화 (Today, Yesterday, Others)
     const groupedDates = dates.reduce((acc, date) => {
-        const group = date.display === 'Today' ? 'Today' :
-            date.display === 'Yesterday' ? 'Yesterday' : 'Others';
+        const group = date.display === 'Today' ? 'Today' : date.display === 'Yesterday' ? 'Yesterday' : 'Others';
         if (!acc[group]) {
             acc[group] = [];
         }

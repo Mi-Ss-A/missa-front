@@ -1,8 +1,8 @@
 // src/pages/OnBoardingPage.js
 import React from 'react';
-import WelcomeMessage from '../components/onboard/WelcomeMessage';
 import Description from '../components/onboard/Description';
 import GetStartedButton from '../components/onboard/GetStartedButton';
+import WelcomeMessage from '../components/onboard/WelcomeMessage';
 
 const OnBoardingPage = () => {
     return (
