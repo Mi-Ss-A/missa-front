@@ -13,7 +13,7 @@ const LoginPage = () => {
         setError(null); // 이전 오류를 초기화
         try {
             const response = await axios.post(
-                'http://www.wibeechat.com/api/users/login', // 로그인 API 엔드포인트
+                '/api/users/login', // 로그인 API 엔드포인트
                 {
                     userId: userId,
                     userPassword: userPassword,
