@@ -5,9 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5cc84bb6-bf3e-46e9-902b-8adea1f543fd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/pages/ChatHistoryDetail.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/HistoryPage.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/HistoryPage.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/router/root.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/router/root.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -50,7 +48,7 @@
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
-    "git-widget-placeholder": "feat/#37/history-binding",
+    "git-widget-placeholder": "deploy",
     "last_opened_file_path": "/Users/seungjibaek/front/missa-front/src/pages",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",

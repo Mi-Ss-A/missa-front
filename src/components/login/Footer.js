@@ -5,7 +5,7 @@ const Footer = () => {
         <footer className="text-center mt-4">
             <p className="text-sm text-gray-500">
                 Create New Account?{' '}
-                <a href="/signup" className="text-black font-semibold hover:underline">
+                <a href="/view/signup" className="text-gray-800 hover:underline">
                     Sign up
                 </a>
             </p>

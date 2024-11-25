@@ -10,10 +10,7 @@ const Header = ({ title, showMenu = false }) => {
             <div className="flex items-center">
                 {/* 뒤로가기 버튼이 필요한 경우 */}
                 {!showMenu && (
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="p-2 hover:bg-gray-100 rounded-full"
-                    >
+                    <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-full">
                         <ArrowLeft size={24} />
                     </button>
                 )}
@@ -21,10 +18,7 @@ const Header = ({ title, showMenu = false }) => {
             </div>
             {/* 메뉴 버튼이 필요한 경우 */}
             {showMenu && (
-                <button
-                    onClick={() => navigate('/preference')}
-                    className="p-2 hover:bg-gray-100 rounded-full"
-                >
+                <button onClick={() => navigate('/view/preference')} className="p-2 hover:bg-gray-100 rounded-full">
                     <Menu size={24} />
                 </button>
             )}
