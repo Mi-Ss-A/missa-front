@@ -10,7 +10,7 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
     // API 요청 처리를 위한 공통 함수
     const handleApiRequest = async (messageText) => {
         try {
-            const response = await axios.post('http://localhost:5000/api/chat', {
+            const response = await axios.post('http://localhost:5000/api/agent/chat', {
                 message: messageText
             });
 
@@ -62,31 +62,6 @@ const processPortfolioRequest = async (messageText,isWaiting = false) => {
     return {message:response, portfolioUrls: [], isWaitingForPeriod:false };
 };
 
-// const handleSubmit = async (e, initialMessage = null) => {
-//     if (e) e.preventDefault();
-
-//     const messageToSend = initialMessage || message;
-//     if (messageToSend.trim()) {
-//         setIsLoading(true);
-//         try {
-//             const { message: responseMessage, isWaitingForPeriod: waitForPeriod } = 
-//                 await processPortfolioRequest(messageToSend, isWaitingForPeriod);
-            
-//             onSendMessage(messageToSend, responseMessage);
-//             setIsWaitingForPeriod(waitForPeriod);
-//             setMessage('');
-//             if (textareaRef.current) {
-//                 textareaRef.current.style.height = '40px';
-//             }
-//         } catch (error) {
-//             console.error('Error sending message:', error);
-//             onSendMessage(messageToSend, '죄송합니다. 오류가 발생했습니다.');
-//             setIsWaitingForPeriod(false);
-//         } finally {
-//             setIsLoading(false);
-//         }
-//     }
-// };
 // Regenerate 처리
     const handleRegenerate = async () => {
         if (lastUserMessage) {
@@ -122,56 +97,6 @@ const processPortfolioRequest = async (messageText,isWaiting = false) => {
         );
     };
 
-    // const handlePortfolioApiRequest = async (period) => {
-    //     try {
-    //         let periodValue;
-    //         switch (period) {
-    //             case '3개월':
-    //             case '3달':
-    //                 periodValue = '3m';
-    //                 break;
-    //             case '6개월':
-    //             case '6달':
-    //                 periodValue = '6m';
-    //                 break;
-    //             case '1년':
-    //             case '일년':
-    //             case '1':
-    //                 periodValue = '1y';
-    //                 break;
-    //             default:
-    //                 periodValue = '1y';
-    //         }
-    
-    //         console.log(periodValue); // 디버깅용 로그
-    
-    //         // // 테스트를 위한 임시 응답
-    //         // return {
-    //         //     message: `${period} 기간의 포트폴리오 데이터를 조회합니다.`
-    //         // };
-    //         const response = await axios.post('http://localhost:5000/api/portfolio', { 
-    //             period: periodValue
-    //         });
-    
-    //         if (response.status !== 200) {
-    //             throw new Error('Portfolio API request failed');
-    //         }
-    
-    //         if (typeof response.data === 'object') {
-    //             return {
-    //                 message: response.data.message || JSON.stringify(response.data)
-    //             };
-    //         }
-    
-    //         return {
-    //             message: response.data
-    //         };
-            
-    //     } catch (error) {
-    //         console.error('Error:', error);
-    //         throw new Error('Portfolio API request failed');
-    //     }
-    // };
 
     const handlePortfolioApiRequest = async (period) => {
         try {
