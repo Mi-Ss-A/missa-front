@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react';
+// pages/ChatPage.js
+import { useEffect, useRef, useState } from 'react';
 import ChatInput from '../components/chat/ChatInput';
 import ChatMessage from '../components/chat/ChatMessage';
 import RegenerateButton from '../components/chat/RegenerateButton';
@@ -8,6 +9,8 @@ const ChatPage = () => {
     const [messages, setMessages] = useState([]);
     const [inputMessage, setInputMessage] = useState('');
     const [lastUserMessage, setLastUserMessage] = useState('');
+    const chatInputRef = useRef(null);
+    const messageEndRef = useRef(null);
 
     const initialMessages = [
         '금융 포트폴리오를 만들어주세요!',
@@ -17,84 +20,62 @@ const ChatPage = () => {
     ];
 
     const handleInitialButtonClick = (text) => {
+        if (lastUserMessage === text) return;
         setLastUserMessage(text);
-
-        // ChatInput의 handleSubmit 호출
-        if (chatInputRef.current) {
-            chatInputRef.current.handleSubmit(null, text);
-        }
+        chatInputRef.current?.handleSubmit(null, text);
     };
 
-    const handleSendMessage = (userMessage, responseMessage, portfolioUrls =[]) => {
+    const handleSendMessage = (userMessage, responseMessage, portfolioUrls = []) => {
         setLastUserMessage(userMessage);
         setMessages((prev) => [
             ...prev,
-            {
-                text: userMessage,
-                isUser: true,
-                timestamp: new Date(),
-            },
-            {
-                text: responseMessage,
-                isUser: false,
-                timestamp: new Date(),
-            },
-            ...portfolioUrls.map((url) => ({
-                text: url,
-                isUser: false,
-                timestamp: new Date(),
-            })),
+            { text: userMessage, isUser: true, timestamp: new Date() },
+            { text: responseMessage, isUser: false, timestamp: new Date() },
+            ...portfolioUrls.map((url) => ({ text: url, isUser: false, timestamp: new Date() })),
         ]);
     };
 
-    const chatInputRef = useRef(null);
-
     const handleRegenerateClick = () => {
-        chatInputRef.current?.handleRegenerate();
+        chatInputRef.current?.handleRegenerate(); // ChatInput의 handleRegenerate 호출
     };
 
+    useEffect(() => {
+        messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [messages]);
+
     return (
-        <BasicLayout showMenu={true}>
-            <div className="flex flex-col h-screen bg-blue-50">
-                {/* 로고 섹션 */}
-                <div className="flex justify-center my-4 md:my-8">
-                    <div className="text-center mt-2">
-                        <h1 className="text-lg md:text-xl font-bold text-blue-600">WIBEE CHAT</h1>
-                        <p className="text-xs md:text-sm text-blue-400">FINANCIAL BUTLER</p>
+        <BasicLayout title="WIBEE CHAT" subtitle="FINANCIAL BUTLER" showMenu={true}>
+            <div className="flex justify-center bg-blue-50 h-full">
+                <div className="max-w-screen-lg w-full px-4 flex flex-col h-full">
+                    {/* 메시지 목록 */}
+                    <div className="flex-1 px-2 md:px-4 overflow-y-auto pb-20 pt-8 scrollbar-hide">
+                        {messages.length > 0 && (
+                            <div className="space-y-2 mb-4">
+                                {messages.map((message, index) => (
+                                    <ChatMessage key={index} text={message.text} isUser={message.isUser} />
+                                ))}
+                                {!messages[messages.length - 1]?.isUser && (
+                                    <RegenerateButton onRegenerate={handleRegenerateClick} />
+                                )}
+                            </div>
+                        )}
+                        {messages.length === 0 && (
+                            <div className="space-y-4 flex flex-col items-center px-4 mt-10">
+                                {initialMessages.map((text, index) => (
+                                    <button
+                                        key={index}
+                                        onClick={() => handleInitialButtonClick(text)}
+                                        className="w-full md:w-2/5 p-4 md:p-8 text-center bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                                    >
+                                        {text}
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                        <div ref={messageEndRef} />
                     </div>
-                </div>
 
-                {/* 메시지 목록 섹션 */}
-                <div className="flex-1 px-2 md:px-4 overflow-y-auto mb-20 md:mb-16">
-                    {messages.length > 0 && (
-                        <div className="space-y-2 mb-4">
-                            {messages.map((message, index) => (
-                                <ChatMessage key={index} text={message.text} isUser={message.isUser} />
-                            ))}
-
-                            {!messages[messages.length - 1]?.isUser && (
-                                <RegenerateButton onRegenerate={handleRegenerateClick} />
-                            )}
-                        </div>
-                    )}
-
-                    {messages.length === 0 && (
-                        <div className="space-y-4 flex flex-col items-center px-4">
-                            {initialMessages.map((text, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => handleInitialButtonClick(text)}
-                                    className="w-full md:w-2/5 p-4 md:p-8 text-center bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow"
-                                >
-                                    {text}
-                                </button>
-                            ))}
-                        </div>
-                    )}
-                </div>
-
-                {/* 메시지 입력 컴포넌트 */}
-                <div className="fixed bottom-0 left-0 right-0 p-2 md:p-4 bg-white">
+                    {/* 입력창 */}
                     <ChatInput
                         ref={chatInputRef}
                         message={inputMessage}
