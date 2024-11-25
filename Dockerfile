@@ -19,8 +19,11 @@ RUN npm run build
 # 단계 2: Nginx를 사용하여 React 앱 제공
 FROM nginx:alpine
 
+# view 디렉토리 생성
+RUN mkdir -p /usr/share/nginx/html/view
+
 # Nginx 기본 디렉터리에 빌드 결과물을 복사
-COPY --from=build /app/build /usr/share/nginx/html
+COPY --from=build /app/build /usr/share/nginx/html/view
 
 # 커스텀 Nginx 설정 파일 복사
 COPY nginx.conf /etc/nginx/conf.d/default.conf
