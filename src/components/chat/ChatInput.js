@@ -10,7 +10,7 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
     // API 요청 처리를 위한 공통 함수
     const handleApiRequest = async (messageText) => {
         try {
-            const response = await axios.post('http://www.wibeechat.com/api/chat', {
+            const response = await axios.post('/api/agent/chat', {
                 message: messageText,
             });
 
