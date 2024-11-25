@@ -9,7 +9,7 @@ const SplashPage = () => {
     useEffect(() => {
         // 3초 후 onboarding으로 이동
         const timer = setTimeout(() => {
-            navigate('/onboarding');
+            navigate('/view/onboarding');
         }, 3000);
 
         return () => clearTimeout(timer); // cleanup

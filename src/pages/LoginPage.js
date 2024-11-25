@@ -1,7 +1,7 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../components/login/LoginForm';
-import axios from 'axios';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -13,12 +13,22 @@ const LoginPage = () => {
         setError(null);
         try {
             const response = await axios.post(
-                'http://localhost:8081/api/users/login',
-                { userId, userPassword },
-                { headers: { 'Content-Type': 'application/json' }, withCredentials: true }
+                'http://localhost:8081/api/users/login', // develop
+                // '/api/users/login', // deploy
+                {
+                    userId: userId,
+                    userPassword: userPassword,
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    withCredentials: true, // 쿠키를 포함하도록 설정
+                }
             );
             if (response.data.success) {
-                navigate('/chat');
+                // 로그인 성공 시, 사용자를 채팅 페이지로 리다이렉트
+                navigate('/view/chat');
             } else {
                 setError('Invalid credentials.');
             }
@@ -35,7 +45,7 @@ const LoginPage = () => {
             <div className="w-full max-w-xs mb-8 flex justify-center z-10">
                 <div
                     className="w-[199px] h-[199px] bg-center bg-contain bg-no-repeat mb-8"
-                    style={{ backgroundImage: "url('/wibee.png')" }}
+                    style={{ backgroundImage: `url('/view/wibee.png')` }}
                 ></div>
             </div>
 
