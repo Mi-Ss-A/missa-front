@@ -11,7 +11,7 @@ const OnBoardingPage = () => {
             <div className="w-full max-w-xs mb-8 flex justify-center z-10">
                 <div
                     className="w-[199px] h-[199px] bg-center bg-contain bg-no-repeat mb-8"
-                    style={{ backgroundImage: "url('/view/wibee.png')" }}
+                    style={{ backgroundImage: `url('${process.env.PUBLIC_URL}/wibee.png')` }}
                 ></div>
             </div>
 
