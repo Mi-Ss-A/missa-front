@@ -155,7 +155,7 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
             // return {
             //     message: `${period} 기간의 포트폴리오 데이터를 조회합니다.`
             // };
-            const response = await axios.post('http://localhost:8082/api/portfolio', {
+            const response = await axios.post('/api/portfolio', {
                 //portfoliosvc server
                 period: periodValue,
             });
