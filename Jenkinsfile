@@ -32,9 +32,9 @@ pipeline {
                 script {
                     sh '''
                     # 현재 빌드된 이미지와 직전 버전 태그 계산
-                    IMAGE_NAME="${IMAGE_NAME}"
-                    CURRENT_TAG="${TAG}"
-                    PREVIOUS_TAG="test-$(( ${BUILD_NUMBER} - 1 ))"
+                    IMAGE_NAME="${env.IMAGE_NAME}"
+                    CURRENT_TAG="${env.TAG}"
+                    PREVIOUS_TAG="test-$(( ${env.BUILD_NUMBER} - 1 ))"
 
                     echo "현재 유지할 이미지 태그: ${CURRENT_TAG}, ${PREVIOUS_TAG}"
 
