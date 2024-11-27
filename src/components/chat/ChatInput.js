@@ -45,8 +45,8 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
             if (isWaiting) {
                 // 대기 중이고 기간이 입력되었을 때만 API 호출
                 if (period) {
-                    // const response = await handleApiRequest('/api/agent/portfolio', { period }); // deploy
-                    const response = await handleApiRequest('http://localhost:5000/api/agent/portfolio', { period }); // develop
+                    const response = await handleApiRequest('/api/agent/portfolio', { period }); // deploy
+                    // const response = await handleApiRequest('http://localhost:5000/api/agent/portfolio', { period }); // develop
                     return { message: response.message || JSON.stringify(response), isWaitingForPeriod: false };
                 }
                 // 기간이 없는 경우 대기 유지
@@ -60,14 +60,14 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
                     return { message: '조회하실 기간을 선택해 주세요: 3개월, 6개월, 1년', isWaitingForPeriod: true };
                 }
                 // 기간이 있으면 포트폴리오 API 요청
-                // const response = await handleApiRequest('/api/agent/portfolio', { period }); // deploy
-                const response = await handleApiRequest('http://localhost:5000/api/agent/portfolio', { period }); // develop
+                const response = await handleApiRequest('/api/agent/portfolio', { period }); // deploy
+                // const response = await handleApiRequest('http://localhost:5000/api/agent/portfolio', { period }); // develop
                 return { message: response.message || JSON.stringify(response), isWaitingForPeriod: false };
             }
 
             // 기본 메시지 처리
-            // const response = await handleApiRequest('/api/agent/chat', { message: messageText }); // deploy
-            const response = await handleApiRequest('http://localhost:5000/api/agent/chat', { message: messageText }); // develop
+            const response = await handleApiRequest('/api/agent/chat', { message: messageText }); // deploy
+            // const response = await handleApiRequest('http://localhost:5000/api/agent/chat', { message: messageText }); // develop
             return { message: response.response, isWaitingForPeriod: false };
         },
         [findPeriodKeyword, handleApiRequest, isLoading, isWaitingForPeriod]

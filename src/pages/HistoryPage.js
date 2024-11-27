@@ -15,7 +15,11 @@ const HistoryPage = () => {
         const fetchHistoryDates = async () => {
             try {
                 setIsLoading(true);
-                const response = await axios.get('http://localhost:8081/api/history/dates', {
+                // develop //
+                // const response = await axios.get('http://localhost:8081/api/history/dates', {
+
+                // deploy //
+                const response = await axios.get('/api/history/dates', {
                     withCredentials: true,
                 });
 

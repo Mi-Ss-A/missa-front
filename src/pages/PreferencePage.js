@@ -17,8 +17,8 @@ const PreferencePage = () => {
 
     const handleLogout = async () => {
         try {
-            // const response = await axios.post('/api/users/logout', {}, { withCredentials: true }); // deploy
-            const response = await axios.post('http://localhost:8081/api/users/logout', {}, { withCredentials: true }); // develop
+            const response = await axios.post('/api/users/logout', {}, { withCredentials: true }); // deploy
+            // const response = await axios.post('http://localhost:8081/api/users/logout', {}, { withCredentials: true }); // develop
             if (response.status === 200) {
                 navigate('/view/login');
             }
