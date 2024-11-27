@@ -1,4 +1,5 @@
 // pages/PreferencePage.js
+import axios from 'axios';
 import { History, LogOut, MessageSquarePlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BasicLayout from '../layouts/BasicLayout';
@@ -14,9 +15,17 @@ const PreferencePage = () => {
         navigate('/view/chat'); // 메인 채팅 페이지로 이동
     };
 
-    const handleLogout = () => {
-        // 로그아웃 처리 로직
-        navigate('/view/login');
+    const handleLogout = async () => {
+        try {
+            // const response = await axios.post('/api/users/logout', {}, { withCredentials: true }); // deploy
+            const response = await axios.post('http://localhost:8081/api/users/logout', {}, { withCredentials: true }); // develop
+            if (response.status === 200) {
+                navigate('/view/login');
+            }
+        } catch (error) {
+            console.error('Logout failed:', error.response?.data?.message || error.message);
+            alert('Logout failed: ' + (error.response?.data?.message || 'Unknown error'));
+        }
     };
 
     return (
