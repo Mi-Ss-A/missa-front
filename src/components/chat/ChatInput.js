@@ -14,16 +14,41 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
 
     const handleApiRequest = useCallback(async (url, payload) => {
         try {
-            const response = await axios.post(url, payload);
+            // 세션 확인 요청
+            const sessionResponse = await axios.get('http://localhost:8081/api/users/check-session', {
+                withCredentials: true, // 쿠키 포함
+            });
+    
+            if (!sessionResponse || !sessionResponse.data) {
+                throw new Error('세션 응답이 없거나 유효하지 않습니다.');
+            }
+    
+            const { redisSessionId } = sessionResponse.data;
+    
+            if (!redisSessionId) {
+                throw new Error('redisSessionId가 세션 응답에 포함되지 않았습니다.');
+            }
+    
+            const updatedPayload = { ...payload, sessionId: redisSessionId };
+    
+            console.log("check-session을 통한 redisSessionId 값:", redisSessionId);
+    
+            // API 요청
+            const response = await axios.post(url, updatedPayload, {
+                withCredentials: true,
+            });
+    
             if (response.status === 200) {
                 return response.data;
             }
+    
             throw new Error('API 요청 실패');
         } catch (error) {
             console.error('API 요청 중 오류:', error);
             throw error;
         }
     }, []);
+    
 
     const findPeriodKeyword = useCallback((message) => {
         if (/3\s*개월?|3\s*달?|3/.test(message)) return '3개월';
@@ -38,40 +63,49 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
             if (isLoading) {
                 return { message: '현재 요청을 처리 중입니다. 잠시만 기다려주세요.', isWaitingForPeriod };
             }
-
-            // 기간 키워드 확인
-            const period = findPeriodKeyword(messageText);
-
-            if (isWaiting) {
-                // 대기 중이고 기간이 입력되었을 때만 API 호출
-                if (period) {
-                    // const response = await handleApiRequest('/api/agent/portfolio', { period }); // deploy
-                    const response = await handleApiRequest('http://localhost:5000/api/agent/portfolio', { period }); // develop
+    
+            try {
+                // 기간 키워드 확인
+                const period = findPeriodKeyword(messageText);
+    
+                if (isWaiting) {
+                    // 대기 중이고 기간이 입력되었을 때만 API 호출
+                    if (period) {
+                        const response = await handleApiRequest('http://localhost:5000/api/agent/portfolio', {
+                            period,
+                        });
+                        return { message: response.message || JSON.stringify(response), isWaitingForPeriod: false };
+                    }
+                    // 기간이 없는 경우 대기 유지
+                    return { message: '기간을 입력해주세요: 3개월, 6개월, 1년', isWaitingForPeriod: true };
+                }
+    
+                // 포트폴리오 요청 키워드 확인
+                if (portfolioKeywords.some((keyword) => messageText.toLowerCase().includes(keyword.toLowerCase()))) {
+                    if (!period) {
+                        // 기간 선택 요청 메시지 반환 및 대기 상태 설정
+                        return { message: '조회하실 기간을 선택해 주세요: 3개월, 6개월, 1년', isWaitingForPeriod: true };
+                    }
+                    // 기간이 있으면 포트폴리오 API 요청
+                    const response = await handleApiRequest('http://localhost:5000/api/agent/portfolio', {
+                        period,
+                    });
                     return { message: response.message || JSON.stringify(response), isWaitingForPeriod: false };
                 }
-                // 기간이 없는 경우 대기 유지
-                return { message: '기간을 입력해주세요: 3개월, 6개월, 1년', isWaitingForPeriod: true };
+    
+                // 기본 메시지 처리
+                const response = await handleApiRequest('http://localhost:5000/api/agent/chat', {
+                    message: messageText,
+                });
+                return { message: response.response, isWaitingForPeriod: false };
+            } catch (error) {
+                console.error('API 요청 중 오류:', error);
+                return { message: '죄송합니다. 오류가 발생했습니다.', isWaitingForPeriod: false };
             }
-
-            // 포트폴리오 요청 키워드가 있을 경우
-            if (portfolioKeywords.some((keyword) => messageText.toLowerCase().includes(keyword.toLowerCase()))) {
-                if (!period) {
-                    // 기간 선택 요청 메시지 반환 및 대기 상태 설정
-                    return { message: '조회하실 기간을 선택해 주세요: 3개월, 6개월, 1년', isWaitingForPeriod: true };
-                }
-                // 기간이 있으면 포트폴리오 API 요청
-                // const response = await handleApiRequest('/api/agent/portfolio', { period }); // deploy
-                const response = await handleApiRequest('http://localhost:5000/api/agent/portfolio', { period }); // develop
-                return { message: response.message || JSON.stringify(response), isWaitingForPeriod: false };
-            }
-
-            // 기본 메시지 처리
-            // const response = await handleApiRequest('/api/agent/chat', { message: messageText }); // deploy
-            const response = await handleApiRequest('http://localhost:5000/api/agent/chat', { message: messageText }); // develop
-            return { message: response.response, isWaitingForPeriod: false };
         },
         [findPeriodKeyword, handleApiRequest, isLoading, isWaitingForPeriod]
     );
+    
 
     const handleSubmit = async (e, initialMessage = null) => {
         e?.preventDefault();
@@ -172,3 +206,4 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
 ChatInput.displayName = 'ChatInput';
 
 export default ChatInput;
+
