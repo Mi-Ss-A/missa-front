@@ -51,9 +51,9 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
     
 
     const findPeriodKeyword = useCallback((message) => {
-        if (/3\s*개월?|3\s*달?|3/.test(message)) return '3개월';
-        if (/6\s*개월?|6\s*달?|6/.test(message)) return '6개월';
-        if (/1\s*년|12\s*개월?|일년/.test(message)) return '1년';
+        if (/3\s*개월?|3\s*달?|3/.test(message)) return '3m';
+        if (/6\s*개월?|6\s*달?|6/.test(message)) return '6m';
+        if (/1\s*년|12\s*개월?|일년/.test(message)) return '1y';
         return periodKeywords.find((keyword) => message.toLowerCase().includes(keyword.toLowerCase()));
     }, []);
 
