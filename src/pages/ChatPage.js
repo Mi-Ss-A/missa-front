@@ -27,13 +27,28 @@ const ChatPage = () => {
 
     const handleSendMessage = (userMessage, responseMessage, portfolioUrls = []) => {
         setLastUserMessage(userMessage);
+    
+        // 메시지와 포트폴리오 URL을 각각 상태로 관리
         setMessages((prev) => [
             ...prev,
             { text: userMessage, isUser: true, timestamp: new Date() },
             { text: responseMessage, isUser: false, timestamp: new Date() },
-            ...portfolioUrls.map((url) => ({ text: url, isUser: false, timestamp: new Date() })),
         ]);
+    
+        // URL을 메시지 리스트에 링크 형태로 추가
+        if (portfolioUrls.length > 0) {
+            setMessages((prev) => [
+                ...prev,
+                ...portfolioUrls.map((url) => ({
+                    text: url,
+                    isUser: false,
+                    isLink: true, // 링크인지 표시
+                    timestamp: new Date(),
+                })),
+            ]);
+        }
     };
+    
 
     const handleRegenerateClick = () => {
         chatInputRef.current?.handleRegenerate(); // ChatInput의 handleRegenerate 호출
