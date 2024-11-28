@@ -51,9 +51,9 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
     
 
     const findPeriodKeyword = useCallback((message) => {
-        if (/3\s*개월?|3\s*달?|3/.test(message)) return '3개월';
-        if (/6\s*개월?|6\s*달?|6/.test(message)) return '6개월';
-        if (/1\s*년|12\s*개월?|일년/.test(message)) return '1년';
+        if (/3\s*개월?|3\s*달?|3/.test(message)) return '3m';
+        if (/6\s*개월?|6\s*달?|6/.test(message)) return '6m';
+        if (/1\s*년|12\s*개월?|일년/.test(message)) return '1y';
         return periodKeywords.find((keyword) => message.toLowerCase().includes(keyword.toLowerCase()));
     }, []);
 
@@ -74,7 +74,12 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
                         const response = await handleApiRequest('http://localhost:5000/api/agent/portfolio', {
                             period,
                         });
-                        return { message: response.message || JSON.stringify(response), isWaitingForPeriod: false };
+                        return { 
+                            message: response.message || '포트폴리오 요청 결과', 
+                            portfolioUrls: response.portfolioUrls || [],
+                            isWaitingForPeriod: false 
+                        };
+                        
                     }
                     // 기간이 없는 경우 대기 유지
                     return { message: '기간을 입력해주세요: 3개월, 6개월, 1년', isWaitingForPeriod: true };
@@ -90,7 +95,11 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
                     const response = await handleApiRequest('http://localhost:5000/api/agent/portfolio', {
                         period,
                     });
-                    return { message: response.message || JSON.stringify(response), isWaitingForPeriod: false };
+                    return { 
+                        message: response.message || '포트폴리오 요청 결과', 
+                        portfolioUrls: response.portfolioUrls || [],
+                        isWaitingForPeriod: false 
+                    };
                 }
     
                 // 기본 메시지 처리
@@ -110,30 +119,28 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
     const handleSubmit = async (e, initialMessage = null) => {
         e?.preventDefault();
         if (isLoading) return;
-
+    
         const messageToSend = initialMessage || message;
         if (!messageToSend.trim()) return;
-
+    
         // 중복 메시지 방지
         if (lastUserMessage === messageToSend && !isWaitingForPeriod) return;
-
+    
         setIsLoading(true);
         try {
             // 요청 처리
-            const { message: responseMessage, isWaitingForPeriod: waitForPeriod } = await processPortfolioRequest(
-                messageToSend,
-                isWaitingForPeriod
-            );
-
+            const { message: responseMessage, portfolioUrls, isWaitingForPeriod: waitForPeriod } =
+                await processPortfolioRequest(messageToSend, isWaitingForPeriod);
+    
             // 메시지 전송
-            onSendMessage(messageToSend, responseMessage);
+            onSendMessage(messageToSend, responseMessage, portfolioUrls); // portfolioUrls를 추가로 전달
             setIsWaitingForPeriod(waitForPeriod);
         } catch (error) {
             console.error('API 요청 중 오류:', error);
             onSendMessage(messageToSend, '죄송합니다. 오류가 발생했습니다.');
             setIsWaitingForPeriod(false);
         } finally {
-            // 입력창 초기화 (textareaRef.current가 존재할 경우에만)
+            // 입력창 초기화
             setMessage('');
             if (textareaRef.current) {
                 textareaRef.current.style.height = '40px';
@@ -141,7 +148,7 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
             setIsLoading(false);
         }
     };
-
+    
     const handleRegenerate = async () => {
         if (!lastUserMessage) return;
 
