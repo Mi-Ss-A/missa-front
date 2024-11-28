@@ -1,24 +1,30 @@
-// components/common/Header.js
 import { ArrowLeft, Menu } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const Header = ({ title, showMenu = false }) => {
+const Header = ({ title, subtitle, showMenu = false }) => {
     const navigate = useNavigate();
 
     return (
-        <div className="flex items-center justify-between p-4 border-b bg-white">
-            <div className="flex items-center">
-                {/* 뒤로가기 버튼이 필요한 경우 */}
-                {!showMenu && (
-                    <button onClick={() => navigate(-1)} className="p-2 hover:bg-gray-100 rounded-full">
-                        <ArrowLeft size={24} />
-                    </button>
-                )}
-                <h1 className={`text-xl font-bold ${!showMenu ? 'ml-4' : ''}`}>{title}</h1>
+        <div className="relative flex items-center justify-center p-4 border-b bg-white">
+            {/* 뒤로가기 버튼 */}
+            {!showMenu && (
+                <button onClick={() => navigate(-1)} className="absolute left-4 p-2 hover:bg-gray-100 rounded-full">
+                    <ArrowLeft size={24} />
+                </button>
+            )}
+
+            {/* 중앙 타이틀 */}
+            <div className="text-center">
+                <h1 className="text-lg font-bold text-blue-600">{title}</h1>
+                {subtitle && <p className="text-sm text-blue-400">{subtitle}</p>}
             </div>
-            {/* 메뉴 버튼이 필요한 경우 */}
+
+            {/* 메뉴 버튼 */}
             {showMenu && (
-                <button onClick={() => navigate('/view/preference')} className="p-2 hover:bg-gray-100 rounded-full">
+                <button
+                    onClick={() => navigate('/view/preference')}
+                    className="absolute right-4 p-2 hover:bg-gray-100 rounded-full"
+                >
                     <Menu size={24} />
                 </button>
             )}
