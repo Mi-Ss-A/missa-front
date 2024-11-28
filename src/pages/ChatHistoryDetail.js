@@ -15,6 +15,9 @@ const ChatHistoryDetail = () => {
         const fetchMessages = async () => {
             try {
                 setIsLoading(true);
+                // develop //
+                // const response = await axios.get(`http://localhost:8081/api/history`, {
+                // deploy //
                 const response = await axios.get(`/api/history`, {
                     params: { date },
                     withCredentials: true,
