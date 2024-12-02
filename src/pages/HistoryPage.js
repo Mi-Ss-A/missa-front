@@ -83,7 +83,7 @@ const HistoryPage = () => {
     }, {});
 
     return (
-        <BasicLayout>
+        <BasicLayout title="History">
             <div className="flex-1 p-4">
                 {Object.entries(groupedDates).map(([group, groupDates]) => (
                     <div key={group} className="mb-6">
