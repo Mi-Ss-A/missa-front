@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 const Loading = <div>Loading....</div>;
@@ -9,6 +9,7 @@ const Login = lazy(() => import('../pages/LoginPage'));
 const Onboarding = lazy(() => import('../pages/OnBoardingPage'));
 const Splash = lazy(() => import('../pages/SplashPage'));
 const ChatHistoryDetail = lazy(() => import('../pages/ChatHistoryDetail'));
+const Portfolio = lazy(() => import('../pages/PortfolioPage'));
 
 // 모든 경로는 "/view"를 기준으로 설정됨
 const root = createBrowserRouter([
@@ -72,6 +73,14 @@ const root = createBrowserRouter([
                 element: (
                     <Suspense fallback={Loading}>
                         <ChatHistoryDetail />
+                    </Suspense>
+                ),
+            },
+            {
+                path: 'portfolios',
+                element: (
+                    <Suspense fallback={Loading}>
+                        <Portfolio />
                     </Suspense>
                 ),
             },
