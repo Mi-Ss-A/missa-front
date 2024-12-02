@@ -12,28 +12,23 @@ const ChatMessage = ({ text, isUser, isLink }) => {
         }
     };
 
-    const triggerDownload = (url) => {
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = '금융포트폴리오'; // 빈 문자열로 설정하면 브라우저가 기본 파일 이름 사용
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
     const renderContent = (content) => {
         if (isUrl(content.trim())) {
-            return (
-                <p
-                    onClick={() => triggerDownload(content.trim())}
-                    className="text-blue-500 underline hover:text-blue-700 cursor-pointer"
-                >
-                    {content.trim()}
-                </p>
-            );
+          return (
+            <a
+              href={content.trim()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 underline hover:text-blue-700 cursor-pointer"
+            >
+              {/* {content.trim()} */}
+              포트폴리오 바로가기
+            </a>
+          );
         }
         return <ReactMarkdown>{content}</ReactMarkdown>;
-    };
+      };
+    
 
     const botMessageBackground = 'bg-gray-200 text-gray-900';
     const userMessageBackground = 'bg-blue-500 text-white';
