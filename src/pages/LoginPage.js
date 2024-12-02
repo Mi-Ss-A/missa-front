@@ -26,14 +26,28 @@ const LoginPage = () => {
                     withCredentials: true, // 쿠키를 포함하도록 설정
                 }
             );
+
             if (response.data.success) {
                 // 로그인 성공 시, 사용자를 채팅 페이지로 리다이렉트
                 navigate('/view/chat');
             } else {
-                setError('Invalid credentials.');
+                setError(response.data.message || 'Invalid credentials.');
             }
-        } catch {
-            setError('Server error occurred.');
+        } catch (error) {
+            if (error.response) {
+                // 서버 응답이 있는 경우
+                const { status, data } = error.response;
+                if (status === 401) {
+                    setError(data.message || '잘못된 비밀번호입니다.');
+                } else if (status === 404) {
+                    setError(data.message || '사용자를 찾을 수 없습니다.');
+                } else {
+                    setError(data.message || '서버 오류가 발생했습니다.');
+                }
+            } else {
+                // 서버 응답이 없는 경우
+                setError('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+            }
         } finally {
             setLoading(false);
         }
