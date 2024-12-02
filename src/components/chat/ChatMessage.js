@@ -1,7 +1,6 @@
 import ReactMarkdown from 'react-markdown';
 
 const ChatMessage = ({ text, isUser, isLink }) => {
-
     // URL 감지 함수
     const isUrl = (str) => {
         try {
@@ -12,27 +11,34 @@ const ChatMessage = ({ text, isUser, isLink }) => {
         }
     };
 
-    const triggerDownload = (url) => {
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = '금융포트폴리오'; // 빈 문자열로 설정하면 브라우저가 기본 파일 이름 사용
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    };
-
     const renderContent = (content) => {
         if (isUrl(content.trim())) {
             return (
-                <p
-                    onClick={() => triggerDownload(content.trim())}
+                <a
+                    href={content.trim()}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-blue-500 underline hover:text-blue-700 cursor-pointer"
                 >
-                    {content.trim()}
-                </p>
+                    {/* {content.trim()} */}
+                    포트폴리오 바로가기
+                </a>
             );
         }
         return <ReactMarkdown>{content}</ReactMarkdown>;
+    };
+
+    const botAvatarStyle = {
+        backgroundImage: 'url("/view/icon.png")', // 벌 이미지 경로
+        backgroundSize: 'cover', // 원형 내부에 맞게 크기 조정
+        backgroundPosition: 'center center', // 이미지 중앙 정렬
+        backgroundRepeat: 'no-repeat', // 반복 방지
+        backgroundColor: '#ffffff', // 흰색 배경 추가
+        border: '2px solid #e5e7eb', // 얇은 테두리
+        borderRadius: '50%', // 완벽한 원형 유지
+        display: 'flex', // 정렬을 위해 flexbox 추가
+        alignItems: 'center', // 수직 정렬
+        justifyContent: 'center', // 수평 정렬
     };
 
     const botMessageBackground = 'bg-gray-200 text-gray-900';
@@ -40,19 +46,21 @@ const ChatMessage = ({ text, isUser, isLink }) => {
 
     return (
         <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4`}>
-            {!isUser && <div className="w-8 h-8 rounded-full bg-blue-500 flex-shrink-0 mr-2"></div>}
+            {!isUser && (
+                <div className="w-14 h-14 rounded-full flex-shrink-0 mr-3 shadow-lg" style={botAvatarStyle}></div>
+            )}
             <div className="max-w-[calc(100%-32px)] flex flex-col">
                 <div
                     className={`break-words whitespace-pre-wrap p-4 rounded-2xl ${
-                        isUser
-                            ? `${userMessageBackground} rounded-br-none`
-                            : `${botMessageBackground} rounded-bl-none`
+                        isUser ? `${userMessageBackground} rounded-br-none` : `${botMessageBackground} rounded-bl-none`
                     }`}
                 >
                     {renderContent(text)}
                 </div>
             </div>
-            {isUser && <div className="w-8 h-8 rounded-full bg-gray-300 flex-shrink-0 ml-2"></div>}
+            {isUser && (
+                <div className="w-14 h-14 rounded-full bg-gray-300 flex-shrink-0 ml-3 flex items-center justify-center shadow-lg"></div>
+            )}
         </div>
     );
 };
