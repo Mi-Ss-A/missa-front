@@ -4,9 +4,10 @@ import ChatInput from '../components/chat/ChatInput';
 import ChatMessage from '../components/chat/ChatMessage';
 import RegenerateButton from '../components/chat/RegenerateButton';
 import BasicLayout from '../layouts/BasicLayout';
+import { useChat } from '../util/ChatContext';
 
 const ChatPage = () => {
-    const [messages, setMessages] = useState([]);
+    const { messages, setMessages } = useChat();
     const [inputMessage, setInputMessage] = useState('');
     const [lastUserMessage, setLastUserMessage] = useState('');
     const chatInputRef = useRef(null);
@@ -27,14 +28,14 @@ const ChatPage = () => {
 
     const handleSendMessage = (userMessage, responseMessage, portfolioUrls = []) => {
         setLastUserMessage(userMessage);
-    
+
         // 메시지와 포트폴리오 URL을 각각 상태로 관리
         setMessages((prev) => [
             ...prev,
             { text: userMessage, isUser: true, timestamp: new Date() },
             { text: responseMessage, isUser: false, timestamp: new Date() },
         ]);
-    
+
         // URL을 메시지 리스트에 링크 형태로 추가
         if (portfolioUrls.length > 0) {
             setMessages((prev) => [
@@ -48,7 +49,6 @@ const ChatPage = () => {
             ]);
         }
     };
-    
 
     const handleRegenerateClick = () => {
         chatInputRef.current?.handleRegenerate(); // ChatInput의 handleRegenerate 호출
