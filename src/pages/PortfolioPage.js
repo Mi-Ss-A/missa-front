@@ -50,6 +50,16 @@ const PortfolioPage = () => {
         return <BasicLayout title="Portfolio Lists">Error: {error}</BasicLayout>;
     }
 
+    const extractFileName = (url) => {
+        try {
+            const path = new URL(url).pathname; // URL 경로 추출
+            return path.substring(path.lastIndexOf('/') + 1); // 마지막 슬래시 이후의 문자열 반환
+        } catch (error) {
+            console.error('Failed to extract file name:', error);
+            return 'Unknown File';
+        }
+    };
+
     return (
         <BasicLayout title="Portfolio Lists">
             <div className="p-6">
@@ -61,10 +71,9 @@ const PortfolioPage = () => {
                                 src={url}
                                 title={`Portfolio Preview ${index + 1}`}
                                 className="w-full h-48 mb-4"
-                                frameBorder="0"
                                 allow="fullscreen"
                             ></iframe>
-
+                            <p className="text-gray-500 text-sm mb-2">{extractFileName(url)}</p>
                             {/* Action Buttons */}
                             <div className="flex justify-between items-center">
                                 <a

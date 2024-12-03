@@ -3,15 +3,19 @@ import axios from 'axios';
 import { History, List, LogOut, MessageSquarePlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BasicLayout from '../layouts/BasicLayout';
+import { useChat } from '../util/ChatContext';
 
 const PreferencePage = () => {
     const navigate = useNavigate();
+    const { setMessages } = useChat(); // setMessages 가져오기
 
     const handleHistory = () => {
         navigate('/view/history');
     };
 
     const handleNewChat = () => {
+        setMessages([]); // 메시지 상태 초기화
+        localStorage.removeItem('chatMessages'); // 로컬 스토리지에서도 삭제
         navigate('/view/chat'); // 메인 채팅 페이지로 이동
     };
 
@@ -24,6 +28,8 @@ const PreferencePage = () => {
             // const response = await axios.post('/api/users/logout', {}, { withCredentials: true }); // deploy
             const response = await axios.post('http://localhost:8081/api/users/logout', {}, { withCredentials: true }); // develop
             if (response.status === 200) {
+                setMessages([]); // 메시지 상태 초기화
+                localStorage.removeItem('chatMessages'); // 로컬 스토리지에서도 삭제
                 navigate('/view/login');
             }
         } catch (error) {
