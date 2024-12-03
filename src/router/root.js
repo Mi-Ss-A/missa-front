@@ -10,6 +10,7 @@ const Onboarding = lazy(() => import('../pages/OnBoardingPage'));
 const Splash = lazy(() => import('../pages/SplashPage'));
 const ChatHistoryDetail = lazy(() => import('../pages/ChatHistoryDetail'));
 const Portfolio = lazy(() => import('../pages/PortfolioPage'));
+const SignUp = lazy(() => import('../pages/SignUpPage'));
 
 // 모든 경로는 "/view"를 기준으로 설정됨
 const root = createBrowserRouter([
@@ -81,6 +82,14 @@ const root = createBrowserRouter([
                 element: (
                     <Suspense fallback={Loading}>
                         <Portfolio />
+                    </Suspense>
+                ),
+            },
+            {
+                path: 'signup', // "/view/signup"
+                element: (
+                    <Suspense fallback={Loading}>
+                        <SignUp />
                     </Suspense>
                 ),
             },
