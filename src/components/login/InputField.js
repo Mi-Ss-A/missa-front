@@ -1,10 +1,9 @@
-import React from 'react';
-
-const InputField = ({ type, placeholder, value, onChange }) => {
+const InputField = ({ type, placeholder, value, onChange, name }) => {
     return (
         <div className="relative">
             <input
                 type={type}
+                name={name}
                 placeholder={placeholder}
                 value={value}
                 onChange={onChange}
