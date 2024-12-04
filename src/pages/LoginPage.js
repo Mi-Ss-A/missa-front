@@ -2,11 +2,13 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LoginForm from '../components/login/LoginForm';
+import { useUser } from '../util/UserContext';
 
 const LoginPage = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const { updateUserStatus } = useUser(); // 상태 업데이트 함수 가져오기
 
     const handleLogin = async (userId, userPassword) => {
         setLoading(true);
@@ -28,6 +30,16 @@ const LoginPage = () => {
             );
 
             if (response.data.success) {
+                // 로그인 성공 시 status 요청
+                // const userInfoResponse = await axios.get('http://localhost:8081/api/users/info', { // develop
+                const userInfoResponse = await axios.get('/api/users/info', {    // deploy 
+                    withCredentials: true, // 쿠키 포함
+                });
+
+                if (userInfoResponse.data) {
+                    updateUserStatus(userInfoResponse.data.status); // 전역 상태 업데이트
+                }
+
                 // 로그인 성공 시, 사용자를 채팅 페이지로 리다이렉트
                 navigate('/view/chat');
             } else {
