@@ -32,9 +32,6 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
             }
 
             const updatedPayload = { ...payload, sessionId: redisSessionId };
-
-            console.log('check-session을 통한 redisSessionId 값:', redisSessionId);
-
             // API 요청
             const response = await axios.post(url, updatedPayload, {
                 withCredentials: true,
