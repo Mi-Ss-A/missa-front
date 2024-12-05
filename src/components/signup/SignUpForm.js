@@ -28,7 +28,8 @@ const SignUpForm = ({ onSuccess }) => {
 
         try {
             const response = await axios.post(
-                'http://localhost:8081/api/users/signUp',
+                // 'http://localhost:8081/api/users/signUp',
+                '/api/users/signUp',
                 { ...formData },
                 { headers: { 'Content-Type': 'application/json' } }
             );
