@@ -14,6 +14,7 @@ const SignUpForm = ({ onSuccess }) => {
         userDateOfBirth: '',
         userGender: '',
         userAddress: '',
+        userType: '',
     });
     const [error, setError] = useState(null);
 
@@ -21,6 +22,19 @@ const SignUpForm = ({ onSuccess }) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
     };
+
+    // UserType 옵션 생성
+    const userTypeOptions = [
+        { value: 'UT001', label: '대학생' },
+        { value: 'UT002', label: '사회초년생' },
+        { value: 'UT003', label: '신혼' },
+        { value: 'UT004', label: '자녀영유아' },
+        { value: 'UT005', label: '자녀의무교육' },
+        { value: 'UT006', label: '자녀대학생' },
+        { value: 'UT007', label: '중년기타' },
+        { value: 'UT008', label: '재혼' },
+        { value: 'UT009', label: '은퇴' },
+    ];
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -85,6 +99,13 @@ const SignUpForm = ({ onSuccess }) => {
                 ]}
             />
             <SignUpInput label="주소" name="userAddress" value={formData.userAddress} onChange={handleChange} />
+            <SignUpSelect
+                label="사용자 유형"
+                name="userType"
+                value={formData.userType}
+                onChange={handleChange}
+                options={userTypeOptions}
+            />
 
             {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
             <SignUpButton label="회원가입" />
