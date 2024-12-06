@@ -1,12 +1,14 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import BasicLayout from '../layouts/BasicLayout';
+
+import { useNavigate } from 'react-router-dom'; // 리다이렉트에 필요
+
 const HistoryPage = () => {
     const [dates, setDates] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
-    const navigate = useNavigate();
+    const navigate = useNavigate(); // 네비게이트 훅 추가
 
     const handleDateClick = (date) => {
         navigate(`/view/history/${date}`);
@@ -15,6 +17,19 @@ const HistoryPage = () => {
         const fetchHistoryDates = async () => {
             try {
                 setIsLoading(true);
+                const sessionResponse = await axios.get('http://localhost:8081/api/users/check-session', {
+                    withCredentials: true,
+                });
+                const redisSessionId = sessionResponse.data.redisSessionId;
+
+                // 세션 만료 처리
+                if (!redisSessionId) {
+                    alert('세션이 만료되었습니다. 로그인 페이지로 이동합니다.');
+                    setIsLoading(false); // 로딩 상태 업데이트
+                    navigate('/view/login'); // 로그인 페이지로 이동
+                    return;
+                }
+
                 const response = await axios.get('http://localhost:8081/api/history/dates', {
                     withCredentials: true,
                 });
@@ -34,7 +49,7 @@ const HistoryPage = () => {
         };
 
         fetchHistoryDates();
-    }, []);
+    }, [navigate]);
 
     const formatDate = (dateString) => {
         const today = new Date();

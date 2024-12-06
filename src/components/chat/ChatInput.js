@@ -2,8 +2,9 @@
 import axios from 'axios';
 import { ArrowUpIcon } from 'lucide-react';
 import { forwardRef, useCallback, useImperativeHandle, useRef, useState } from 'react';
-import LoadingSpinner from '../ui/LoadingSpinner';
+import { useNavigate } from 'react-router-dom'; // 리다이렉트에 필요
 import { useUser } from '../../util/UserContext';
+import LoadingSpinner from '../ui/LoadingSpinner';
 
 const portfolioKeywords = ['portfolio', '포트 폴리오', '포트폴리오', 'portpolio', '포폴', 'vhvhf', 'vhxmvhffldh'];
 const periodKeywords = ['3개월', '6개월', '1년', '3달', '6달', '일년', '3', '6', '12', '1'];
@@ -13,43 +14,46 @@ const ChatInput = forwardRef(({ message, setMessage, onSendMessage, lastUserMess
     const [isWaitingForPeriod, setIsWaitingForPeriod] = useState(false);
     const textareaRef = useRef(null);
     const { isPortfolioAllowed } = useUser(); // 상태 확인 함수 가져오기
+    const navigate = useNavigate(); // 네비게이트 훅 추가
 
-    const handleApiRequest = useCallback(async (url, payload) => {
-        try {
-            // 세션 확인 요청
-            const sessionResponse = await axios.get('http://localhost:8081/api/users/check-session', {
-                withCredentials: true, // 쿠키 포함
-            });
+    const handleApiRequest = useCallback(
+        async (url, payload) => {
+            try {
+                // 세션 확인 요청
+                const sessionResponse = await axios.get('http://localhost:8081/api/users/check-session', {
+                    withCredentials: true, // 쿠키 포함
+                });
 
-            if (!sessionResponse || !sessionResponse.data) {
-                throw new Error('세션 응답이 없거나 유효하지 않습니다.');
+                const redisSessionId = sessionResponse.data.redisSessionId;
+
+                // 세션 만료 처리
+                if (!redisSessionId) {
+                    alert('세션이 만료되었습니다. 로그인 페이지로 이동합니다.');
+                    setIsLoading(false); // 로딩 상태 업데이트
+                    navigate('/view/login'); // 로그인 페이지로 이동
+                    return;
+                }
+                const updatedPayload = { ...payload, sessionId: redisSessionId };
+
+                console.log('check-session을 통한 redisSessionId 값:', redisSessionId);
+
+                // API 요청
+                const response = await axios.post(url, updatedPayload, {
+                    withCredentials: true,
+                });
+
+                if (response.status === 200) {
+                    return response.data;
+                }
+
+                throw new Error('API 요청 실패');
+            } catch (error) {
+                console.error('API 요청 중 오류:', error);
+                throw error;
             }
-
-            const { redisSessionId } = sessionResponse.data;
-
-            if (!redisSessionId) {
-                throw new Error('redisSessionId가 세션 응답에 포함되지 않았습니다.');
-            }
-
-            const updatedPayload = { ...payload, sessionId: redisSessionId };
-
-            console.log('check-session을 통한 redisSessionId 값:', redisSessionId);
-
-            // API 요청
-            const response = await axios.post(url, updatedPayload, {
-                withCredentials: true,
-            });
-
-            if (response.status === 200) {
-                return response.data;
-            }
-
-            throw new Error('API 요청 실패');
-        } catch (error) {
-            console.error('API 요청 중 오류:', error);
-            throw error;
-        }
-    }, []);
+        },
+        [navigate]
+    );
 
     const findPeriodKeyword = useCallback((message) => {
         if (/3\s*개월?|3\s*달?|3/.test(message)) return '3m';

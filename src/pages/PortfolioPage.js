@@ -2,11 +2,13 @@
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import BasicLayout from '../layouts/BasicLayout';
+import { useNavigate } from 'react-router-dom'; // 리다이렉트에 필요
 
 const PortfolioPage = () => {
     const [portfolioUrls, setPortfolioUrls] = useState([]); // 현재 데이터
     const [loading, setLoading] = useState(true); // 로딩 상태
     const [error, setError] = useState(null); // 에러 상태
+    const navigate = useNavigate(); // 네비게이트 훅 추가
 
     useEffect(() => {
         const fetchPortfolios = async () => {
@@ -24,6 +26,14 @@ const PortfolioPage = () => {
                 });
                 const redisSessionId = sessionResponse.data.redisSessionId;
 
+                // 세션 만료 처리
+                if (!redisSessionId) {
+                    alert('세션이 만료되었습니다. 로그인 페이지로 이동합니다.');
+                    setLoading(false); // 로딩 상태 업데이트
+                    navigate('/view/login'); // 로그인 페이지로 이동
+                    return;
+                }
+
                 const response = await axios.post('http://localhost:8082/api/portfolio/list', { redisSessionId });
 
                 if (response.status === 200 && response.data.portfolioUrls) {
@@ -40,7 +50,7 @@ const PortfolioPage = () => {
         };
 
         fetchPortfolios();
-    }, []);
+    }, [navigate]);
 
     if (loading) {
         return <BasicLayout title="Portfolio Lists">Loading...</BasicLayout>;
